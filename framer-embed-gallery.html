@@ -352,7 +352,7 @@
                     
                     // Create script element for JSONP
                     const script = document.createElement('script');
-                    script.src = `https://api.flickr.com/services/rest/?method=flickr.photosets.getPhotos&api_key=${this.apiKey}&photoset_id=${this.albumId}&user_id=${this.userId}&extras=tags,url_m,url_l,description,machine_tags&format=json&jsoncallback=${callbackName}`;
+                    script.src = `https://www.flickr.com/services/rest/?method=flickr.photosets.getPhotos&api_key=${this.apiKey}&photoset_id=${this.albumId}&user_id=${this.userId}&extras=tags,url_m,url_l&format=json&jsoncallback=${callbackName}&_=${timestamp}`;
                     
                     // Debug: Log the API URL being called
                     console.log('Flickr API URL:', script.src);
