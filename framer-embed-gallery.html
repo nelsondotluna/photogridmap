@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flickr Gallery - Framer Embed</title>
+    <style>
+        /* 
+        🎨 FRAMER EMBED CUSTOMIZATION GUIDE
+        ===================================
+        
+        📐 LAYOUT & SIZE:
+        - .gallery-container: Controls overall gallery container
+        - .gallery-grid grid-template-columns: Changes number of columns (repeat(4, 1fr) = 4 columns)
+        - .gallery-grid gap: Space between photos
+        
+        📝 FONTS & TEXT:
+        - h2 font-size: Filter title size (inherits from Framer if not set)
+        - .filter-tag font-size: Filter button text size  
+        
+        🎨 COLORS:
+        - Uses inherit where possible to match your Framer theme
+        - .filter-tag color: Filter text color
+        - .filter-tag.active color: Selected filter color
+        
+        📱 MOBILE:
+        - @media breakpoints: 768px, 480px, 320px
+        - Mobile grid-template-columns: 2 columns on mobile
+        
+        ⚙️ FLICKR CONFIG (in JavaScript at bottom):
+        - apiKey: Your Flickr API key
+        - albumId: Your specific album ID  
+        - userId: Your Flickr user ID
+        */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* 🖼️ MAIN CONTAINER - Framer optimized */
+        .gallery-container {
+            width: 100%;              /* 📏 Full width to fit Framer container */
+            margin: 0;                /* No auto margins for embed */
+            padding: 0;               /* 📦 No padding - let Framer control spacing */
+            font-family: inherit;     /* 📝 Inherit Framer's font */
+            color: inherit;           /* 🎨 Inherit Framer's text color */
+        }
+
+        /* 📋 FILTER SECTION */
+        .filter-container {
+            margin-bottom: 20px;     /* 📏 Space below filters */
+            text-align: center;      /* Center filter elements */
+        }
+
+        .filter-container h2 {
+            font-size: inherit;      /* 📝 Inherit from Framer theme */
+            margin-bottom: 15px;     /* 📏 Space below title */
+            color: inherit;          /* 🎨 Match Framer text color */
+            font-weight: inherit;    /* Use Framer's font weight */
+        }
+
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;              /* 📏 Space between filter items */
+        }
+
+        /* 🏷️ FILTER TAGS - Text style for Framer */
+        .filter-tag {
+            background: none;        /* No background - just text */
+            border: none;           /* No border */
+            padding: 8px 12px;      /* 📦 Padding around text */
+            cursor: pointer;
+            font-size: inherit;     /* 📝 Inherit Framer font size */
+            color: inherit;         /* 🎨 Inherit Framer text color */
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+            font-family: inherit;
+        }
+
+        .filter-tag:hover {
+            opacity: 0.7;           /* 🎨 Subtle hover effect */
+        }
+
+        .filter-tag.active {
+            color: #007AFF;         /* 🎨 Active filter color - change to match your brand */
+            font-weight: bold;      /* Make active filters bold */
+        }
+
+        /* ➖ FILTER SEPARATORS */
+        .filter-separator {
+            color: inherit;         /* 🎨 Match text color */
+            font-weight: bold;
+            padding: 8px 4px;
+            font-size: inherit;
+        }
+
+        /* 🖼️ PHOTO GRID */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);  /* 📐 4 columns desktop - change number for different layout */
+            gap: 4px;                               /* 📏 Gap between photos - adjust spacing */
+            width: 100%;
+        }
+
+        .photo-item {
+            position: relative;
+            aspect-ratio: 1;        /* 📐 Square photos - change to 4/3 or 16/9 for rectangles */
+            overflow: hidden;
+            cursor: pointer;
+            border-radius: 4px;     /* 🎨 Rounded corners - set to 0 for sharp edges */
+            transition: transform 0.2s ease;
+        }
+
+        .photo-item:hover {
+            transform: scale(1.02);  /* 🎨 Subtle hover zoom - change or remove */
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;      /* 📐 How image fills container */
+            transition: opacity 0.3s ease;
+        }
+
+        /* 🔄 LOADING & ERROR STATES */
+        .loading, .error {
+            text-align: center;
+            padding: 40px 20px;     /* 📦 Padding around messages */
+            font-size: inherit;     /* 📝 Inherit Framer font size */
+            color: inherit;         /* 🎨 Match Framer text color */
+        }
+
+        .error {
+            color: #ff4444;         /* 🎨 Error color - red */
+        }
+
+        /* 🖼️ LIGHTBOX */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 9999;          /* 📏 High z-index to appear above Framer content */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);  /* 🎨 Overlay darkness */
+        }
+
+        .lightbox-content {
+            position: relative;
+            margin: auto;
+            padding: 20px;
+            width: 90%;
+            max-width: 800px;       /* 📏 Max lightbox width */
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .lightbox-content img {
+            width: 100%;
+            height: auto;
+            max-height: 80vh;       /* 📏 Max height for large images */
+            object-fit: contain;
+            border-radius: 8px;     /* 🎨 Rounded corners in lightbox */
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;              /* 📍 Close button position from top */
+            right: 25px;            /* 📍 Close button position from right */
+            color: white;
+            font-size: 35px;        /* 📝 Close button size */
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10000;
+            width: 45px;            /* 📏 Close button width */
+            height: 45px;           /* 📏 Close button height */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: rgba(0,0,0,0.5);  /* 🎨 Close button background */
+        }
+
+        .close:hover {
+            background-color: rgba(0,0,0,0.8);  /* 🎨 Close button hover color */
+        }
+
+        /* 🎭 ANIMATION CLASSES */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .fade-out {
+            animation: fadeOut 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        /* 📱 MOBILE RESPONSIVE BREAKPOINTS */
+        @media (max-width: 768px) { /* 🔧 Tablet breakpoint */
+            .gallery-grid {
+                grid-template-columns: repeat(3, 1fr); /* 📐 3 columns on tablet */
+                gap: 3px;                              /* 📏 Smaller gap on tablet */
+            }
+            
+            .lightbox-content {
+                padding: 10px;         /* 📦 Less padding on tablet */
+            }
+
+            .filter-tags {
+                gap: 8px;              /* 📏 Smaller gap between filters */
+            }
+        }
+
+        @media (max-width: 480px) { /* 🔧 Mobile breakpoint */
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr); /* 📐 2 columns on mobile */
+                gap: 2px;                              /* 📏 Minimal gap on mobile */
+            }
+
+            .filter-tag {
+                padding: 6px 10px;     /* 📦 Smaller filter padding on mobile */
+                font-size: 14px;       /* 📝 Smaller filter text on mobile */
+            }
+        }
+
+        @media (max-width: 320px) { /* 🔧 Small mobile breakpoint */
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr); /* 📐 Still 2 columns on small mobile */
+                gap: 2px;
+            }
+            .close {
+                top: 20px;             /* 📍 Adjust close button on small screens */
+                right: 20px;
+                font-size: 30px;       /* 📝 Smaller close button */
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="gallery-container">
+        <div class="filter-container">
+            <h2>Filter Photos</h2>
+            <div class="filter-tags" id="filterTags">
+                <!-- Filter tags will be populated here -->
+            </div>
+        </div>
+        
+        <div id="loading" class="loading">Loading photos...</div>
+        <div id="error" class="error" style="display: none;">
+            Failed to load photos. Please check your Flickr API configuration.
+        </div>
+        
+        <div class="gallery-grid" id="gallery">
+            <!-- Photos will be populated here -->
+        </div>
+    </div>
+
+    <!-- Lightbox -->
+    <div id="lightbox" class="lightbox">
+        <span class="close" id="closeLightbox">&times;</span>
+        <div class="lightbox-content">
+            <img id="lightboxImg" src="" alt="">
+        </div>
+    </div>
+
+    <script>
+        class FlickrGallery {
+            constructor() {
+                /* ⚙️ MAIN CONFIGURATION - Change these for your Flickr account */
+                this.apiKey = 'cfa92568a91ee1d02ecb512ae6eeb541'; // 🔑 Your Flickr API key
+                this.albumId = '72177720330059990'; // 📁 Your specific album/photoset ID
+                this.userId = '202863354@N08'; // 👤 Your Flickr user ID
+                this.photos = [];
+                this.filteredPhotos = [];
+                this.allTags = new Set();
+                this.activeTags = new Set();
+                
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.loadPhotos();
+            }
+
+            setupEventListeners() {
+                // Lightbox events
+                document.getElementById('closeLightbox').onclick = () => this.closeLightbox();
+                document.getElementById('lightbox').onclick = (e) => {
+                    if (e.target.id === 'lightbox') this.closeLightbox();
+                };
+                
+                // Keyboard events
+                document.onkeydown = (e) => {
+                    if (e.key === 'Escape') this.closeLightbox();
+                };
+            }
+
+            async loadPhotos() {
+                try {
+                    const photos = await this.fetchFlickrPhotos();
+                    this.processPhotos(photos);
+                } catch (error) {
+                    console.error('Error loading Flickr photos:', error);
+                    this.showError();
+                }
+            }
+
+            // Flickr API call using JSONP to avoid CORS issues
+            async fetchFlickrPhotos() {
+                return new Promise((resolve, reject) => {
+                    // Add timestamp to prevent caching issues
+                    const timestamp = Date.now();
+                    const callbackName = `flickrCallback_${timestamp}`;
+                    
+                    // Create global callback function
+                    window[callbackName] = (data) => {
+                        console.log('Flickr API response:', data);
+                        
+                        // Clean up
+                        delete window[callbackName];
+                        document.head.removeChild(script);
+                        
+                        if (data.stat === 'ok') {
+                            resolve(data.photoset.photo);
+                        } else {
+                            reject(new Error('Flickr API error: ' + data.message));
+                        }
+                    };
+                    
+                    // Create script element for JSONP
+                    const script = document.createElement('script');
+                    script.src = `https://api.flickr.com/services/rest/?method=flickr.photosets.getPhotos&api_key=${this.apiKey}&photoset_id=${this.albumId}&user_id=${this.userId}&extras=tags,url_m,url_l&format=json&jsoncallback=${callbackName}`;
+                    
+                    script.onerror = () => {
+                        delete window[callbackName];
+                        document.head.removeChild(script);
+                        reject(new Error('Failed to load Flickr API script'));
+                    };
+                    
+                    document.head.appendChild(script);
+                    
+                    // Set timeout for API call
+                    setTimeout(() => {
+                        if (window[callbackName]) {
+                            delete window[callbackName];
+                            if (script.parentNode) {
+                                document.head.removeChild(script);
+                            }
+                            reject(new Error('Flickr API request timeout'));
+                        }
+                    }, 10000);
+                });
+            }
+
+            processPhotos(photos) {
+                console.log('Processing photos:', photos);
+                
+                this.photos = photos.map(photo => ({
+                    id: photo.id,
+                    title: photo.title,
+                    url_m: photo.url_m,
+                    url_l: photo.url_l || photo.url_m,
+                    tags: photo.tags ? photo.tags.split(' ').filter(tag => tag.length > 0) : []
+                }));
+
+                // Shuffle the photos array
+                this.shuffleArray(this.photos);
+
+                // Extract all unique tags
+                this.photos.forEach(photo => {
+                    photo.tags.forEach(tag => this.allTags.add(tag));
+                });
+
+                this.filteredPhotos = [...this.photos];
+                
+                this.hideLoading();
+                this.renderFilterTags();
+                this.renderGallery();
+            }
+
+            shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            }
+
+            renderFilterTags() {
+                const filterContainer = document.getElementById('filterTags');
+                const tags = Array.from(this.allTags).sort();
+                
+                // Create "All" filter
+                const allFilter = document.createElement('span');
+                allFilter.className = 'filter-tag active';
+                allFilter.textContent = 'All';
+                allFilter.onclick = () => this.filterByTag(null);
+                filterContainer.appendChild(allFilter);
+
+                // Add separator
+                if (tags.length > 0) {
+                    const separator = document.createElement('span');
+                    separator.className = 'filter-separator';
+                    separator.textContent = ' | ';
+                    filterContainer.appendChild(separator);
+                }
+
+                // Create individual tag filters
+                tags.forEach((tag, index) => {
+                    const tagElement = document.createElement('span');
+                    tagElement.className = 'filter-tag';
+                    tagElement.textContent = tag;
+                    tagElement.onclick = () => this.filterByTag(tag);
+                    filterContainer.appendChild(tagElement);
+
+                    // Add separator between tags (but not after the last one)
+                    if (index < tags.length - 1) {
+                        const separator = document.createElement('span');
+                        separator.className = 'filter-separator';
+                        separator.textContent = ' | ';
+                        filterContainer.appendChild(separator);
+                    }
+                });
+            }
+
+            filterByTag(tag) {
+                // Update active filter UI
+                document.querySelectorAll('.filter-tag').forEach(el => el.classList.remove('active'));
+                
+                if (tag === null) {
+                    // Show all photos
+                    this.filteredPhotos = [...this.photos];
+                    document.querySelector('.filter-tag[onclick*="null"]').classList.add('active');
+                } else {
+                    // Filter by tag
+                    this.filteredPhotos = this.photos.filter(photo => photo.tags.includes(tag));
+                    document.querySelector(`.filter-tag[onclick*="${tag}"]`).classList.add('active');
+                }
+
+                this.renderGallery();
+            }
+
+            renderGallery() {
+                const gallery = document.getElementById('gallery');
+                
+                // Fade out current photos
+                const currentPhotos = gallery.querySelectorAll('.photo-item');
+                currentPhotos.forEach(photo => photo.classList.add('fade-out'));
+                
+                setTimeout(() => {
+                    gallery.innerHTML = '';
+                    
+                    this.filteredPhotos.forEach(photo => {
+                        const photoElement = document.createElement('div');
+                        photoElement.className = 'photo-item fade-in';
+                        
+                        const img = document.createElement('img');
+                        img.src = photo.url_m;
+                        img.alt = photo.title;
+                        img.loading = 'lazy';
+                        
+                        photoElement.appendChild(img);
+                        photoElement.onclick = () => this.openLightbox(photo);
+                        
+                        gallery.appendChild(photoElement);
+                    });
+                }, 300);
+            }
+
+            openLightbox(photo) {
+                const lightbox = document.getElementById('lightbox');
+                const lightboxImg = document.getElementById('lightboxImg');
+                
+                lightboxImg.src = photo.url_l;
+                lightboxImg.alt = photo.title;
+                lightbox.style.display = 'block';
+            }
+
+            closeLightbox() {
+                document.getElementById('lightbox').style.display = 'none';
+            }
+
+            hideLoading() {
+                document.getElementById('loading').style.display = 'none';
+            }
+
+            showError() {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+            }
+        }
+
+        // Initialize the gallery when the page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            new FlickrGallery();
+        });
+    </script>
+</body>
+</html>
