@@ -753,17 +753,24 @@
                 document.querySelectorAll('.filter-tag').forEach(el => el.classList.remove('active'));
                 
                 if (tag === null) {
-                    // Show all photos
+                    // Show all photos and reshuffle them
                     this.filteredPhotos = [...this.photos];
+                    this.shuffleArray(this.filteredPhotos); // 🎲 Reshuffle all photos
+                    console.log('Reshuffled all photos for fresh layout');
+                    
                     const allFilter = document.querySelector('.filter-tag[data-tag="all"]');
                     if (allFilter) allFilter.classList.add('active');
                 } else {
-                    // Filter by tag
+                    // Filter by tag and shuffle within category
                     this.filteredPhotos = this.photos.filter(photo => {
                         const hasTag = photo.tags.includes(tag);
                         console.log(`Photo "${photo.title}" has tag "${tag}":`, hasTag, 'Tags:', photo.tags);
                         return hasTag;
                     });
+                    
+                    // Shuffle the filtered results for variety
+                    this.shuffleArray(this.filteredPhotos); // 🎲 Reshuffle within category
+                    console.log(`Reshuffled ${this.filteredPhotos.length} photos in category "${tag}"`);
                     
                     const tagFilter = document.querySelector(`.filter-tag[data-tag="${tag}"]`);
                     if (tagFilter) tagFilter.classList.add('active');
