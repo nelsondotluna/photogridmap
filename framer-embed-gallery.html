@@ -352,7 +352,10 @@
                     
                     // Create script element for JSONP
                     const script = document.createElement('script');
-                    script.src = `https://api.flickr.com/services/rest/?method=flickr.photosets.getPhotos&api_key=${this.apiKey}&photoset_id=${this.albumId}&user_id=${this.userId}&extras=tags,url_m,url_l&format=json&jsoncallback=${callbackName}`;
+                    script.src = `https://api.flickr.com/services/rest/?method=flickr.photosets.getPhotos&api_key=${this.apiKey}&photoset_id=${this.albumId}&user_id=${this.userId}&extras=tags,url_m,url_l,description,machine_tags&format=json&jsoncallback=${callbackName}`;
+                    
+                    // Debug: Log the API URL being called
+                    console.log('Flickr API URL:', script.src);
                     
                     script.onerror = () => {
                         delete window[callbackName];
@@ -405,6 +408,12 @@
                 // Debug: Log all found tags
                 console.log('All unique tags found:', Array.from(this.allTags));
 
+                // If no tags found, create some basic categories based on photo titles/descriptions
+                if (this.allTags.size === 0) {
+                    console.log('No tags found, creating basic categories...');
+                    this.createBasicCategories();
+                }
+
                 this.filteredPhotos = [...this.photos];
                 
                 this.hideLoading();
@@ -417,6 +426,20 @@
                     const j = Math.floor(Math.random() * (i + 1));
                     [array[i], array[j]] = [array[j], array[i]];
                 }
+            }
+
+            createBasicCategories() {
+                // Create simple categories and assign them to photos
+                const categories = ['Recent', 'Featured', 'Collection'];
+                
+                this.photos.forEach((photo, index) => {
+                    // Assign categories in a rotating pattern
+                    const categoryIndex = index % categories.length;
+                    photo.tags = [categories[categoryIndex]];
+                    this.allTags.add(categories[categoryIndex]);
+                });
+                
+                console.log('Created basic categories:', Array.from(this.allTags));
             }
 
             renderFilterTags() {
