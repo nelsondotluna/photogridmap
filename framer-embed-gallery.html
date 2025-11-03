@@ -48,10 +48,22 @@
             color: inherit;           /* 🎨 Inherit Framer's text color */
         }
 
-        /* 📋 FILTER SECTION */
+        /* 📋 FILTER SECTION - STICKY */
         .filter-container {
+            position: sticky;        /* 📌 Stick to top when scrolling */
+            top: 0;                  /* 📏 Stick to very top */
+            z-index: 100;            /* 📏 Above photos but below lightbox */
+            background: linear-gradient(180deg, 
+                        rgba(255,255,255,0.95) 0%, 
+                        rgba(255,255,255,0.9) 80%, 
+                        rgba(255,255,255,0.7) 100%); /* 🎨 Subtle gradient background */
+            backdrop-filter: blur(10px); /* 🎪 Modern blur effect */
+            -webkit-backdrop-filter: blur(10px); /* 🍎 Safari support */
+            padding: 15px 0;         /* 📦 Padding around filters */
             margin-bottom: 20px;     /* 📏 Space below filters */
             text-align: center;      /* Center filter elements */
+            border-bottom: 1px solid rgba(0,0,0,0.1); /* 📏 Subtle bottom border */
+            transition: all 0.3s ease; /* 🎭 Smooth transitions */
         }
 
         .filter-container h2 {
@@ -59,6 +71,18 @@
             margin-bottom: 15px;     /* 📏 Space below title */
             color: inherit;          /* 🎨 Match Framer text color */
             font-weight: inherit;    /* Use Framer's font weight */
+            transition: all 0.3s ease; /* 🎭 Smooth transitions */
+        }
+
+        /* 📌 Enhanced sticky state */
+        .filter-container.scrolled {
+            background: rgba(255,255,255,0.98); /* 🎨 More opaque when scrolled */
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1); /* 📏 Soft shadow */
+        }
+
+        .filter-container.scrolled h2 {
+            font-size: 0.9em;       /* 📝 Slightly smaller title when sticky */
+            margin-bottom: 10px;     /* 📏 Less space when compact */
         }
 
         .filter-tags {
@@ -378,6 +402,7 @@
             
             .lightbox-content {
                 padding: 10px;         /* 📦 Less padding on tablet */
+                width: 95%;            /* 📱 More width on tablet */
             }
 
             .filter-tags {
@@ -392,8 +417,64 @@
             }
 
             .filter-tag {
-                padding: 6px 10px;     /* 📦 Smaller filter padding on mobile */
-                font-size: 14px;       /* 📝 Smaller filter text on mobile */
+                padding: 8px 12px;     /* 📦 Touch-friendly padding on mobile */
+                font-size: 16px;       /* 📝 Larger text for mobile readability */
+                min-height: 44px;      /* 📱 iOS recommended touch target */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .filter-tags {
+                gap: 12px;             /* 📏 More space for fat fingers */
+                flex-wrap: wrap;
+            }
+
+            /* 📱 Sticky filters on mobile */
+            .filter-container {
+                padding: 10px 0;      /* 📦 Less padding on mobile */
+                margin-bottom: 15px;   /* 📏 Less margin on mobile */
+            }
+            
+            .filter-container.scrolled {
+                padding: 8px 0;       /* 📦 Even more compact when scrolled */
+            }
+            
+            .filter-container.scrolled h2 {
+                font-size: 0.85em;    /* 📝 Smaller title on mobile when scrolled */
+                margin-bottom: 8px;    /* 📏 Tighter spacing */
+            }
+
+            /* 📱 Reduce animation intensity on mobile for performance */
+            .photo-item {
+                transition: transform 0.2s ease; /* Faster transitions */
+            }
+            
+            .fade-in {
+                animation-duration: 0.4s; /* Shorter animations */
+            }
+            
+            .scale-bounce {
+                animation-duration: 0.3s;
+            }
+            
+            .slide-up {
+                animation-duration: 0.4s;
+            }
+            
+            .wobble {
+                animation-duration: 0.5s;
+            }
+
+            /* 📱 Mobile-friendly hover states (touch) */
+            .photo-item:active {
+                transform: scale(0.95);
+                transition: transform 0.1s ease;
+            }
+            
+            .filter-tag:active {
+                transform: scale(0.95);
+                background-color: rgba(0,122,255,0.1);
             }
         }
 
@@ -402,12 +483,40 @@
                 grid-template-columns: repeat(2, 1fr); /* 📐 Still 2 columns on small mobile */
                 gap: 2px;
             }
+            
             .close {
-                top: 20px;             /* 📍 Adjust close button on small screens */
-                right: 20px;
-                font-size: 30px;       /* 📝 Smaller close button */
-                width: 40px;
-                height: 40px;
+                top: 15px;             /* 📍 Adjust close button on small screens */
+                right: 15px;
+                font-size: 28px;       /* 📝 Smaller close button */
+                width: 44px;           /* 📱 iOS recommended touch target */
+                height: 44px;
+            }
+            
+            .lightbox-content {
+                width: 98%;            /* 📱 Almost full width on small mobile */
+                padding: 5px;
+            }
+            
+            .lightbox-content img {
+                border-radius: 8px;    /* 🎨 Less rounded on small screens */
+                max-height: 85vh;      /* 📱 More height for small screens */
+            }
+        }
+
+        /* 📱 MOBILE TOUCH OPTIMIZATIONS */
+        @media (hover: none) and (pointer: coarse) {
+            /* This targets touch devices */
+            .photo-item:hover {
+                transform: none;       /* Disable hover effects on touch devices */
+            }
+            
+            .filter-tag:hover::before {
+                width: 0;              /* Disable hover ripple on touch */
+                height: 0;
+            }
+            
+            .filter-tag:hover {
+                transform: none;       /* Disable hover lift on touch */
             }
         }
     </style>
@@ -455,8 +564,32 @@
             }
 
             init() {
+                this.isMobile = window.innerWidth <= 480;
                 this.setupEventListeners();
+                this.setupStickyFilters();
                 this.loadPhotos();
+                
+                // Listen for orientation changes
+                window.addEventListener('resize', () => {
+                    this.isMobile = window.innerWidth <= 480;
+                });
+            }
+
+            setupStickyFilters() {
+                const filterContainer = document.querySelector('.filter-container');
+                let isScrolled = false;
+                
+                window.addEventListener('scroll', () => {
+                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    
+                    if (scrollTop > 20 && !isScrolled) {
+                        filterContainer.classList.add('scrolled');
+                        isScrolled = true;
+                    } else if (scrollTop <= 20 && isScrolled) {
+                        filterContainer.classList.remove('scrolled');
+                        isScrolled = false;
+                    }
+                });
             }
 
             setupEventListeners() {
@@ -761,19 +894,33 @@
                             const animationType = animations[index % animations.length];
                             photoElement.classList.add(animationType);
                             
-                            // Add a subtle hover enhancement after animation completes
+                            // Add interaction enhancements after animation completes
                             setTimeout(() => {
-                                photoElement.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
-                                photoElement.addEventListener('mouseenter', () => {
-                                    photoElement.style.transform = 'scale(1.02) translateY(-3px)';
-                                    photoElement.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
-                                });
-                                photoElement.addEventListener('mouseleave', () => {
-                                    photoElement.style.transform = 'scale(1) translateY(0)';
-                                    photoElement.style.boxShadow = 'none';
-                                });
-                            }, 600);
-                        }, index * 100); // Stagger entrance animations
+                                if (this.isMobile) {
+                                    // Mobile: Touch-based interactions
+                                    photoElement.style.transition = 'transform 0.2s ease';
+                                    photoElement.addEventListener('touchstart', (e) => {
+                                        e.preventDefault();
+                                        photoElement.style.transform = 'scale(0.95)';
+                                    });
+                                    photoElement.addEventListener('touchend', () => {
+                                        photoElement.style.transform = 'scale(1)';
+                                        setTimeout(() => this.openLightbox(photo), 100);
+                                    });
+                                } else {
+                                    // Desktop: Hover effects
+                                    photoElement.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                                    photoElement.addEventListener('mouseenter', () => {
+                                        photoElement.style.transform = 'scale(1.02) translateY(-3px)';
+                                        photoElement.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
+                                    });
+                                    photoElement.addEventListener('mouseleave', () => {
+                                        photoElement.style.transform = 'scale(1) translateY(0)';
+                                        photoElement.style.boxShadow = 'none';
+                                    });
+                                }
+                            }, this.isMobile ? 400 : 600);
+                        }, this.isMobile ? index * 50 : index * 100); // Faster stagger on mobile
                     });
                     
                     console.log('Gallery rendered with', gallery.children.length, 'elements');
