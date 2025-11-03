@@ -446,11 +446,15 @@
                 const filterContainer = document.getElementById('filterTags');
                 const tags = Array.from(this.allTags).sort();
                 
+                // Clear existing filters
+                filterContainer.innerHTML = '';
+                
                 // Create "All" filter
                 const allFilter = document.createElement('span');
                 allFilter.className = 'filter-tag active';
                 allFilter.textContent = 'All';
-                allFilter.onclick = () => this.filterByTag(null);
+                allFilter.dataset.tag = 'all';
+                allFilter.addEventListener('click', () => this.filterByTag(null));
                 filterContainer.appendChild(allFilter);
 
                 // Add separator
@@ -466,7 +470,8 @@
                     const tagElement = document.createElement('span');
                     tagElement.className = 'filter-tag';
                     tagElement.textContent = tag;
-                    tagElement.onclick = () => this.filterByTag(tag);
+                    tagElement.dataset.tag = tag;
+                    tagElement.addEventListener('click', () => this.filterByTag(tag));
                     filterContainer.appendChild(tagElement);
 
                     // Add separator between tags (but not after the last one)
@@ -480,23 +485,35 @@
             }
 
             filterByTag(tag) {
+                console.log('Filtering by tag:', tag);
+                console.log('Available photos:', this.photos.length);
+                
                 // Update active filter UI
                 document.querySelectorAll('.filter-tag').forEach(el => el.classList.remove('active'));
                 
                 if (tag === null) {
                     // Show all photos
                     this.filteredPhotos = [...this.photos];
-                    document.querySelector('.filter-tag[onclick*="null"]').classList.add('active');
+                    const allFilter = document.querySelector('.filter-tag[data-tag="all"]');
+                    if (allFilter) allFilter.classList.add('active');
                 } else {
                     // Filter by tag
-                    this.filteredPhotos = this.photos.filter(photo => photo.tags.includes(tag));
-                    document.querySelector(`.filter-tag[onclick*="${tag}"]`).classList.add('active');
+                    this.filteredPhotos = this.photos.filter(photo => {
+                        const hasTag = photo.tags.includes(tag);
+                        console.log(`Photo "${photo.title}" has tag "${tag}":`, hasTag, 'Tags:', photo.tags);
+                        return hasTag;
+                    });
+                    
+                    const tagFilter = document.querySelector(`.filter-tag[data-tag="${tag}"]`);
+                    if (tagFilter) tagFilter.classList.add('active');
                 }
 
+                console.log('Filtered photos:', this.filteredPhotos.length);
                 this.renderGallery();
             }
 
             renderGallery() {
+                console.log('Rendering gallery with', this.filteredPhotos.length, 'photos');
                 const gallery = document.getElementById('gallery');
                 
                 // Fade out current photos
@@ -516,10 +533,12 @@
                         img.loading = 'lazy';
                         
                         photoElement.appendChild(img);
-                        photoElement.onclick = () => this.openLightbox(photo);
+                        photoElement.addEventListener('click', () => this.openLightbox(photo));
                         
                         gallery.appendChild(photoElement);
                     });
+                    
+                    console.log('Gallery rendered with', gallery.children.length, 'elements');
                 }, 300);
             }
 
