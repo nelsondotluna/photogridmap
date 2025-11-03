@@ -691,7 +691,7 @@
 
             createBasicCategories() {
                 // Create simple categories and assign them to photos
-                const categories = ['Recent', 'Featured', 'Collection'];
+                const categories = ['recent', 'featured', 'collection'];
                 
                 this.photos.forEach((photo, index) => {
                     // Assign categories in a rotating pattern
@@ -713,7 +713,7 @@
                 // Create "All" filter
                 const allFilter = document.createElement('span');
                 allFilter.className = 'filter-tag active';
-                allFilter.textContent = 'All';
+                allFilter.textContent = 'all';
                 allFilter.dataset.tag = 'all';
                 allFilter.addEventListener('click', () => this.filterByTag(null));
                 filterContainer.appendChild(allFilter);
