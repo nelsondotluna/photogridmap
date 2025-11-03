@@ -66,23 +66,10 @@
             transition: all 0.3s ease; /* 🎭 Smooth transitions */
         }
 
-        .filter-container h2 {
-            font-size: inherit;      /* 📝 Inherit from Framer theme */
-            margin-bottom: 15px;     /* 📏 Space below title */
-            color: inherit;          /* 🎨 Match Framer text color */
-            font-weight: inherit;    /* Use Framer's font weight */
-            transition: all 0.3s ease; /* 🎭 Smooth transitions */
-        }
-
-        /* 📌 Enhanced sticky state */
+        /*  Enhanced sticky state */
         .filter-container.scrolled {
             background: rgba(255,255,255,0.98); /* 🎨 More opaque when scrolled */
             box-shadow: 0 2px 20px rgba(0,0,0,0.1); /* 📏 Soft shadow */
-        }
-
-        .filter-container.scrolled h2 {
-            font-size: 0.9em;       /* 📝 Slightly smaller title when sticky */
-            margin-bottom: 10px;     /* 📏 Less space when compact */
         }
 
         .filter-tags {
@@ -419,11 +406,6 @@
             .filter-container.scrolled {
                 padding: 8px 0;       /* 📦 Even more compact when scrolled */
             }
-            
-            .filter-container.scrolled h2 {
-                font-size: 0.85em;    /* 📝 Smaller title on mobile when scrolled */
-                margin-bottom: 8px;    /* 📏 Tighter spacing */
-            }
 
             /* 📱 Reduce animation intensity on mobile for performance */
             .photo-item {
@@ -492,7 +474,6 @@
 <body>
     <div class="gallery-container">
         <div class="filter-container">
-            <h2>Filter Photos</h2>
             <div class="filter-tags" id="filterTags">
                 <!-- Filter tags will be populated here -->
             </div>
