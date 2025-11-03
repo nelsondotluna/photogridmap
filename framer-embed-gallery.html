@@ -333,6 +333,12 @@
                     window[callbackName] = (data) => {
                         console.log('Flickr API response:', data);
                         
+                        // Debug: Check if we're getting tags in the response
+                        if (data.stat === 'ok' && data.photoset && data.photoset.photo) {
+                            console.log('Sample photo data:', data.photoset.photo[0]);
+                            console.log('Tags in first photo:', data.photoset.photo[0].tags);
+                        }
+                        
                         // Clean up
                         delete window[callbackName];
                         document.head.removeChild(script);
@@ -372,13 +378,21 @@
             processPhotos(photos) {
                 console.log('Processing photos:', photos);
                 
-                this.photos = photos.map(photo => ({
-                    id: photo.id,
-                    title: photo.title,
-                    url_m: photo.url_m,
-                    url_l: photo.url_l || photo.url_m,
-                    tags: photo.tags ? photo.tags.split(' ').filter(tag => tag.length > 0) : []
-                }));
+                this.photos = photos.map(photo => {
+                    // Debug: Log each photo's tags
+                    console.log(`Photo "${photo.title}" tags:`, photo.tags);
+                    
+                    return {
+                        id: photo.id,
+                        title: photo.title,
+                        url_m: photo.url_m,
+                        url_l: photo.url_l || photo.url_m,
+                        tags: photo.tags ? photo.tags.split(' ').filter(tag => tag.length > 0) : []
+                    };
+                });
+
+                // Debug: Log processed photos with tags
+                console.log('Processed photos with tags:', this.photos);
 
                 // Shuffle the photos array
                 this.shuffleArray(this.photos);
@@ -387,6 +401,9 @@
                 this.photos.forEach(photo => {
                     photo.tags.forEach(tag => this.allTags.add(tag));
                 });
+
+                // Debug: Log all found tags
+                console.log('All unique tags found:', Array.from(this.allTags));
 
                 this.filteredPhotos = [...this.photos];
                 
