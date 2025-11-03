@@ -138,7 +138,7 @@
             color: #ff4444;         /* 🎨 Error color - red */
         }
 
-        /* 🖼️ LIGHTBOX */
+        /* 🖼️ LIGHTBOX WITH MODERN ANIMATIONS */
         .lightbox {
             display: none;
             position: fixed;
@@ -147,6 +147,11 @@
             top: 0;
             width: 100%;
             height: 100%;
+            background-color: rgba(0,0,0,0);  /* Start transparent */
+            transition: background-color 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .lightbox.show {
             background-color: rgba(0,0,0,0.8);  /* 🎨 Overlay darkness */
         }
 
@@ -157,7 +162,14 @@
             width: 90%;
             max-width: 800px;       /* 📏 Max lightbox width */
             top: 50%;
-            transform: translateY(-50%);
+            transform: translateY(-50%) scale(0.3);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            opacity: 0;
+        }
+
+        .lightbox-content.show {
+            transform: translateY(-50%) scale(1);
+            opacity: 1;
         }
 
         .lightbox-content img {
@@ -165,7 +177,13 @@
             height: auto;
             max-height: 80vh;       /* 📏 Max height for large images */
             object-fit: contain;
-            border-radius: 8px;     /* 🎨 Rounded corners in lightbox */
+            border-radius: 12px;    /* 🎨 More rounded corners */
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .lightbox-content img:hover {
+            transform: scale(1.02);
         }
 
         .close {
@@ -190,23 +208,165 @@
             background-color: rgba(0,0,0,0.8);  /* 🎨 Close button hover color */
         }
 
-        /* 🎭 ANIMATION CLASSES */
+        /* 🎭 MODERN MOTION GRAPHICS ANIMATIONS */
+        .photo-item {
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* 🎪 Bouncy easing */
+        }
+
         .fade-in {
-            animation: fadeIn 0.3s ease-in-out;
+            animation: modernFadeIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .fade-out {
-            animation: fadeOut 0.3s ease-in-out;
+            animation: modernFadeOut 0.4s cubic-bezier(0.55, 0.085, 0.68, 0.53);
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .scale-bounce {
+            animation: scaleBounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
+        .slide-up {
+            animation: slideUpBounce 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .wobble {
+            animation: wobbleIn 0.8s cubic-bezier(0.36, 0, 0.66, -0.56);
+        }
+
+        /* 🎪 Modern fade in with scale and slight rotation */
+        @keyframes modernFadeIn {
+            0% { 
+                opacity: 0; 
+                transform: scale(0.8) rotate(-2deg) translateY(20px);
+                filter: blur(4px);
+            }
+            60% { 
+                opacity: 0.8; 
+                transform: scale(1.05) rotate(1deg) translateY(-5px);
+                filter: blur(1px);
+            }
+            100% { 
+                opacity: 1; 
+                transform: scale(1) rotate(0deg) translateY(0);
+                filter: blur(0);
+            }
+        }
+
+        /* 🌪️ Modern fade out with shrink and spin */
+        @keyframes modernFadeOut {
+            0% { 
+                opacity: 1; 
+                transform: scale(1) rotate(0deg);
+                filter: blur(0);
+            }
+            100% { 
+                opacity: 0; 
+                transform: scale(0.3) rotate(5deg) translateY(-30px);
+                filter: blur(3px);
+            }
+        }
+
+        /* 🎯 Bouncy scale animation */
+        @keyframes scaleBounce {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            75% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        /* 🚀 Slide up with bounce */
+        @keyframes slideUpBounce {
+            0% { 
+                opacity: 0;
+                transform: translateY(100px) scale(0.8);
+            }
+            60% { 
+                opacity: 0.8;
+                transform: translateY(-10px) scale(1.05);
+            }
+            100% { 
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* 🌊 Wobble entrance */
+        @keyframes wobbleIn {
+            0% { 
+                opacity: 0;
+                transform: translateX(-50px) rotate(-10deg) scale(0.5);
+            }
+            30% { 
+                opacity: 0.5;
+                transform: translateX(15px) rotate(5deg) scale(1.1);
+            }
+            60% { 
+                opacity: 0.8;
+                transform: translateX(-8px) rotate(-2deg) scale(0.95);
+            }
+            100% { 
+                opacity: 1;
+                transform: translateX(0) rotate(0deg) scale(1);
+            }
+        }
+
+        /* 🎨 Filter button hover animations */
+        .filter-tag {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .filter-tag::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(0,122,255,0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform: translate(-50%, -50%);
+            z-index: -1;
+        }
+
+        .filter-tag:hover::before {
+            width: 200px;
+            height: 200px;
+        }
+
+        .filter-tag:hover {
+            transform: translateY(-2px) scale(1.05);
+            text-shadow: 0 2px 8px rgba(0,122,255,0.3);
+        }
+
+        .filter-tag.active {
+            transform: translateY(-1px) scale(1.02);
+            text-shadow: 0 1px 4px rgba(0,122,255,0.4);
+        }
+
+        /* 🎪 Loading animation upgrade */
+        .loading {
+            position: relative;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0,122,255,0.3);
+            border-radius: 50%;
+            border-top-color: #007AFF;
+            animation: modernSpin 1s ease-in-out infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes modernSpin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
         }
 
         /* 📱 MOBILE RESPONSIVE BREAKPOINTS */
@@ -488,14 +648,29 @@
                 console.log('Filtering by tag:', tag);
                 console.log('Available photos:', this.photos.length);
                 
-                // Update active filter UI
-                document.querySelectorAll('.filter-tag').forEach(el => el.classList.remove('active'));
+                // Animate filter button press
+                const allFilters = document.querySelectorAll('.filter-tag');
+                allFilters.forEach(el => {
+                    el.classList.remove('active');
+                    // Add a small bounce to all inactive filters
+                    if ((tag === null && el.dataset.tag !== 'all') || (tag !== null && el.dataset.tag !== tag)) {
+                        el.style.transform = 'scale(0.95)';
+                        setTimeout(() => {
+                            el.style.transform = '';
+                        }, 150);
+                    }
+                });
                 
                 if (tag === null) {
                     // Show all photos
                     this.filteredPhotos = [...this.photos];
                     const allFilter = document.querySelector('.filter-tag[data-tag="all"]');
-                    if (allFilter) allFilter.classList.add('active');
+                    if (allFilter) {
+                        allFilter.classList.add('active');
+                        // Animate the selected filter
+                        allFilter.style.transform = 'scale(1.1)';
+                        setTimeout(() => allFilter.style.transform = '', 200);
+                    }
                 } else {
                     // Filter by tag
                     this.filteredPhotos = this.photos.filter(photo => {
@@ -505,27 +680,70 @@
                     });
                     
                     const tagFilter = document.querySelector(`.filter-tag[data-tag="${tag}"]`);
-                    if (tagFilter) tagFilter.classList.add('active');
+                    if (tagFilter) {
+                        tagFilter.classList.add('active');
+                        // Animate the selected filter with a bounce
+                        tagFilter.style.transform = 'scale(1.1) rotate(2deg)';
+                        setTimeout(() => {
+                            tagFilter.style.transform = 'scale(1.02) rotate(0deg)';
+                        }, 200);
+                    }
                 }
 
                 console.log('Filtered photos:', this.filteredPhotos.length);
+                
+                // Add a subtle screen flash effect for dramatic filtering
+                this.addFilterFlashEffect();
                 this.renderGallery();
+            }
+
+            addFilterFlashEffect() {
+                const gallery = document.getElementById('gallery');
+                const flash = document.createElement('div');
+                flash.style.cssText = `
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: radial-gradient(circle, rgba(0,122,255,0.1) 0%, transparent 70%);
+                    pointer-events: none;
+                    opacity: 0;
+                    z-index: 1000;
+                `;
+                
+                gallery.style.position = 'relative';
+                gallery.appendChild(flash);
+                
+                // Animate the flash
+                flash.style.transition = 'opacity 0.3s ease-out';
+                setTimeout(() => flash.style.opacity = '1', 10);
+                setTimeout(() => {
+                    flash.style.opacity = '0';
+                    setTimeout(() => gallery.removeChild(flash), 300);
+                }, 100);
             }
 
             renderGallery() {
                 console.log('Rendering gallery with', this.filteredPhotos.length, 'photos');
                 const gallery = document.getElementById('gallery');
                 
-                // Fade out current photos
+                // Modern exit animation - staggered fade out
                 const currentPhotos = gallery.querySelectorAll('.photo-item');
-                currentPhotos.forEach(photo => photo.classList.add('fade-out'));
+                currentPhotos.forEach((photo, index) => {
+                    setTimeout(() => {
+                        photo.classList.add('fade-out');
+                    }, index * 50); // Stagger the exit animations
+                });
                 
+                // Wait for exit animations to complete
                 setTimeout(() => {
                     gallery.innerHTML = '';
                     
-                    this.filteredPhotos.forEach(photo => {
+                    // Modern entrance animations - variety of effects
+                    this.filteredPhotos.forEach((photo, index) => {
                         const photoElement = document.createElement('div');
-                        photoElement.className = 'photo-item fade-in';
+                        photoElement.className = 'photo-item';
                         
                         const img = document.createElement('img');
                         img.src = photo.url_m;
@@ -536,23 +754,67 @@
                         photoElement.addEventListener('click', () => this.openLightbox(photo));
                         
                         gallery.appendChild(photoElement);
+                        
+                        // Staggered entrance with different animation styles
+                        setTimeout(() => {
+                            const animations = ['fade-in', 'scale-bounce', 'slide-up', 'wobble'];
+                            const animationType = animations[index % animations.length];
+                            photoElement.classList.add(animationType);
+                            
+                            // Add a subtle hover enhancement after animation completes
+                            setTimeout(() => {
+                                photoElement.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                                photoElement.addEventListener('mouseenter', () => {
+                                    photoElement.style.transform = 'scale(1.02) translateY(-3px)';
+                                    photoElement.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
+                                });
+                                photoElement.addEventListener('mouseleave', () => {
+                                    photoElement.style.transform = 'scale(1) translateY(0)';
+                                    photoElement.style.boxShadow = 'none';
+                                });
+                            }, 600);
+                        }, index * 100); // Stagger entrance animations
                     });
                     
                     console.log('Gallery rendered with', gallery.children.length, 'elements');
-                }, 300);
+                }, 400); // Wait for all exit animations
             }
 
             openLightbox(photo) {
                 const lightbox = document.getElementById('lightbox');
+                const lightboxContent = lightbox.querySelector('.lightbox-content');
                 const lightboxImg = document.getElementById('lightboxImg');
                 
-                lightboxImg.src = photo.url_l;
+                // Set up the image
+                lightboxImg.src = photo.url_l || photo.url_m;
                 lightboxImg.alt = photo.title;
+                
+                // Show lightbox with animation
                 lightbox.style.display = 'block';
+                
+                // Trigger animations with slight delay for smoother effect
+                setTimeout(() => {
+                    lightbox.classList.add('show');
+                    lightboxContent.classList.add('show');
+                }, 10);
+                
+                // Prevent body scroll
+                document.body.style.overflow = 'hidden';
             }
 
             closeLightbox() {
-                document.getElementById('lightbox').style.display = 'none';
+                const lightbox = document.getElementById('lightbox');
+                const lightboxContent = lightbox.querySelector('.lightbox-content');
+                
+                // Animate out
+                lightbox.classList.remove('show');
+                lightboxContent.classList.remove('show');
+                
+                // Hide after animation
+                setTimeout(() => {
+                    lightbox.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }, 400);
             }
 
             hideLoading() {
