@@ -190,8 +190,8 @@
 
         .lightbox-content img {
             display: block;         /* Remove any inline spacing */
-            max-width: 95vw;        /* Use more horizontal space */
-            max-height: 85vh;       /* Use more vertical space for better fit */
+            max-width: 90vw;        /* Constrain to visible viewport width */
+            max-height: 80vh;       /* Constrain to visible viewport height */
             width: auto;
             height: auto;
             object-fit: contain;    /* Ensures entire image is visible without cropping */
@@ -203,8 +203,8 @@
         /* Mobile image sizing */
         @media screen and (max-width: 768px) {
             .lightbox-content img {
-                max-height: 80vh;    /* More space for mobile images */
-                max-width: 98vw;     /* Almost full width on mobile */
+                max-height: 70vh;    /* Fit within mobile viewport */
+                max-width: 90vw;     /* Conservative mobile width */
             }
         }
 
@@ -497,15 +497,15 @@
         }
         
         .lightbox-content {
-            /* True viewport centering for optimal image display */
+            /* Constrain to current viewport only - no document scrolling */
             position: fixed !important;
-            top: 50vh !important;          /* Center vertically */
+            top: 50vh !important;          /* Center vertically in viewport */
             left: 50vw !important;
             transform: translate(-50%, -50%) scale(0.3) !important;  /* Center both ways */
-            max-height: 90vh !important;   /* Use most of viewport height */
-            max-width: 95vw !important;
+            max-height: 80vh !important;   /* Fit within current viewport height */
+            max-width: 90vw !important;    /* Fit within current viewport width */
             margin: 0 !important;
-            overflow: visible !important;  /* Allow content to show fully */
+            overflow: hidden !important;   /* Prevent any overflow scrolling */
             z-index: 1000000 !important;
             box-sizing: border-box !important;
             display: block !important;
@@ -518,7 +518,8 @@
         /* Mobile specific positioning */
         @media screen and (max-width: 768px) {
             .lightbox-content {
-                max-height: 85vh !important;  /* Slightly less on mobile for UI elements */
+                max-height: 75vh !important;  /* More conservative on mobile */
+                max-width: 95vw !important;   /* Use more width on mobile */
             }
         }
 
