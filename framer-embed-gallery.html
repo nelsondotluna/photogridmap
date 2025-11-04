@@ -942,22 +942,31 @@
                 // Force a reflow to ensure positioning is applied
                 lightboxContent.offsetHeight;
                 
-                // Add scroll prevention to lightbox itself
+                // Add comprehensive scroll prevention without touching body overflow
                 const preventScroll = (e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     return false;
                 };
                 
+                // Add listeners to document and window to catch all scroll attempts
+                document.addEventListener('touchmove', preventScroll, { passive: false });
+                document.addEventListener('wheel', preventScroll, { passive: false });
+                document.addEventListener('scroll', preventScroll, { passive: false });
+                window.addEventListener('scroll', preventScroll, { passive: false });
+                
+                // Also add to lightbox itself
                 lightbox.addEventListener('touchmove', preventScroll, { passive: false });
                 lightbox.addEventListener('wheel', preventScroll, { passive: false });
-                lightbox.addEventListener('scroll', preventScroll, { passive: false });
                 
                 // Store event listeners for cleanup
                 lightbox._preventScrollListeners = [
-                    { event: 'touchmove', handler: preventScroll },
-                    { event: 'wheel', handler: preventScroll },
-                    { event: 'scroll', handler: preventScroll }
+                    { target: document, event: 'touchmove', handler: preventScroll },
+                    { target: document, event: 'wheel', handler: preventScroll },
+                    { target: document, event: 'scroll', handler: preventScroll },
+                    { target: window, event: 'scroll', handler: preventScroll },
+                    { target: lightbox, event: 'touchmove', handler: preventScroll },
+                    { target: lightbox, event: 'wheel', handler: preventScroll }
                 ];
                 
                 // Trigger animations with slight delay for smoother effect
@@ -966,10 +975,10 @@
                     lightboxContent.classList.add('show');
                 }, 10);
                 
-                // Prevent scrolling without disrupting sticky nav
-                document.body.style.overflow = 'hidden';
+                // Prevent scrolling WITHOUT touching body overflow (preserves sticky nav)
                 document.body.style.touchAction = 'none'; // Prevent mobile scroll
-                document.documentElement.style.overflow = 'hidden'; // Prevent html scroll
+                document.body.style.userSelect = 'none'; // Prevent text selection
+                document.body.style.webkitUserSelect = 'none';
                 
                 // Store scroll position for restoration
                 lightbox.dataset.scrollY = scrollY;
@@ -985,8 +994,8 @@
                 
                 // Clean up scroll prevention listeners
                 if (lightbox._preventScrollListeners) {
-                    lightbox._preventScrollListeners.forEach(({ event, handler }) => {
-                        lightbox.removeEventListener(event, handler);
+                    lightbox._preventScrollListeners.forEach(({ target, event, handler }) => {
+                        target.removeEventListener(event, handler);
                     });
                     delete lightbox._preventScrollListeners;
                 }
@@ -996,9 +1005,9 @@
                     lightbox.style.display = 'none';
                     
                     // Restore scrolling without disrupting layout
-                    document.body.style.overflow = 'auto';
                     document.body.style.touchAction = 'auto';
-                    document.documentElement.style.overflow = 'auto';
+                    document.body.style.userSelect = 'auto';
+                    document.body.style.webkitUserSelect = 'auto';
                     
                     // No need to restore scroll position since we didn't move it
                 }, 400);
