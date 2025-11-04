@@ -190,11 +190,11 @@
 
         .lightbox-content img {
             display: block;         /* Remove any inline spacing */
-            max-width: 90vw;        /* Responsive to viewport */
-            max-height: calc(100vh - 160px); /* Account for top positioning */
+            max-width: 95vw;        /* Use more horizontal space */
+            max-height: 85vh;       /* Use more vertical space for better fit */
             width: auto;
             height: auto;
-            object-fit: contain;
+            object-fit: contain;    /* Ensures entire image is visible without cropping */
             border-radius: 12px;    /* 🎨 More rounded corners */
             box-shadow: 0 25px 50px rgba(0,0,0,0.5);
             transition: transform 0.3s ease, opacity 0.3s ease;
@@ -203,8 +203,8 @@
         /* Mobile image sizing */
         @media screen and (max-width: 768px) {
             .lightbox-content img {
-                max-height: calc(100vh - 120px); /* Account for mobile top positioning */
-                max-width: 95vw;
+                max-height: 80vh;    /* More space for mobile images */
+                max-width: 98vw;     /* Almost full width on mobile */
             }
         }
 
@@ -497,29 +497,28 @@
         }
         
         .lightbox-content {
-            /* Position at fixed distance from top instead of centering */
+            /* True viewport centering for optimal image display */
             position: fixed !important;
-            top: 80px !important;          /* Fixed distance from top */
+            top: 50vh !important;          /* Center vertically */
             left: 50vw !important;
-            transform: translate(-50%, 0) scale(0.3) !important;  /* Only center horizontally */
-            max-height: calc(100vh - 120px) !important;  /* Leave space at top and bottom */
+            transform: translate(-50%, -50%) scale(0.3) !important;  /* Center both ways */
+            max-height: 90vh !important;   /* Use most of viewport height */
             max-width: 95vw !important;
             margin: 0 !important;
-            overflow: auto !important;
+            overflow: visible !important;  /* Allow content to show fully */
             z-index: 1000000 !important;
             box-sizing: border-box !important;
             display: block !important;
         }
         
         .lightbox-content.show {
-            transform: translate(-50%, 0) scale(1) !important;  /* Only center horizontally */
+            transform: translate(-50%, -50%) scale(1) !important;  /* Center both ways */
         }
 
         /* Mobile specific positioning */
         @media screen and (max-width: 768px) {
             .lightbox-content {
-                top: 60px !important;     /* Closer to top on mobile */
-                max-height: calc(100vh - 100px) !important;
+                max-height: 85vh !important;  /* Slightly less on mobile for UI elements */
             }
         }
 
@@ -956,11 +955,11 @@
                 lightbox.style.height = '100vh';
                 lightbox.style.zIndex = '10000';
                 
-                // Force content positioning - fixed distance from top
+                // Force content positioning - true viewport centering
                 lightboxContent.style.position = 'fixed';
                 lightboxContent.style.left = '50vw';
-                lightboxContent.style.top = this.isMobile ? '60px' : '80px';
-                lightboxContent.style.transform = 'translate(-50%, 0) scale(0.3)';
+                lightboxContent.style.top = '50vh';
+                lightboxContent.style.transform = 'translate(-50%, -50%) scale(0.3)';
                 lightboxContent.style.zIndex = '10001';
                 lightboxContent.style.margin = '0';
                 
