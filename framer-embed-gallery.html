@@ -190,8 +190,8 @@
 
         .lightbox-content img {
             display: block;         /* Remove any inline spacing */
-            max-width: 90vw;        /* Constrain to visible viewport width */
-            max-height: 80vh;       /* Constrain to visible viewport height */
+            max-width: 85vw;        /* More conservative for smaller screens */
+            max-height: 70vh;       /* More conservative to prevent cropping */
             width: auto;
             height: auto;
             object-fit: contain;    /* Ensures entire image is visible without cropping */
@@ -203,8 +203,21 @@
         /* Mobile image sizing */
         @media screen and (max-width: 768px) {
             .lightbox-content img {
-                max-height: 70vh;    /* Fit within mobile viewport */
-                max-width: 90vw;     /* Conservative mobile width */
+                max-height: 60vh;    /* More conservative for mobile */
+                max-width: 85vw;     /* More conservative mobile width */
+            }
+        }
+
+        /* Very small screens */
+        @media screen and (max-width: 480px) {
+            .lightbox-content {
+                max-height: 65vh !important;  /* Even more conservative */
+                max-width: 95vw !important;   /* Use more width on tiny screens */
+            }
+            
+            .lightbox-content img {
+                max-height: 55vh;    /* Very conservative for small screens */
+                max-width: 90vw;     /* Use more available width */
             }
         }
 
@@ -502,8 +515,8 @@
             top: 50vh !important;          /* Center vertically in viewport */
             left: 50vw !important;
             transform: translate(-50%, -50%) scale(0.3) !important;  /* Center both ways */
-            max-height: 80vh !important;   /* Fit within current viewport height */
-            max-width: 90vw !important;    /* Fit within current viewport width */
+            max-height: 70vh !important;   /* Conservative height to prevent cropping */
+            max-width: 85vw !important;    /* Conservative width for smaller screens */
             margin: 0 !important;
             overflow: hidden !important;   /* Prevent any overflow scrolling */
             z-index: 1000000 !important;
@@ -518,8 +531,14 @@
         /* Mobile specific positioning */
         @media screen and (max-width: 768px) {
             .lightbox-content {
-                max-height: 75vh !important;  /* More conservative on mobile */
-                max-width: 95vw !important;   /* Use more width on mobile */
+                top: 80px !important;         /* Fixed distance from top on mobile */
+                transform: translate(-50%, 0) scale(0.3) !important; /* Only center horizontally */
+                max-height: 70vh !important;  /* Conservative height for mobile */
+                max-width: 90vw !important;   /* Conservative width for mobile */
+            }
+            
+            .lightbox-content.show {
+                transform: translate(-50%, 0) scale(1) !important; /* Only center horizontally */
             }
         }
 
@@ -956,11 +975,18 @@
                 lightbox.style.height = '100vh';
                 lightbox.style.zIndex = '10000';
                 
-                // Force content positioning - true viewport centering
+                // Force content positioning - responsive to device type
                 lightboxContent.style.position = 'fixed';
                 lightboxContent.style.left = '50vw';
-                lightboxContent.style.top = '50vh';
-                lightboxContent.style.transform = 'translate(-50%, -50%) scale(0.3)';
+                if (this.isMobile) {
+                    // Fixed distance from top on mobile
+                    lightboxContent.style.top = '80px';
+                    lightboxContent.style.transform = 'translate(-50%, 0) scale(0.3)';
+                } else {
+                    // Centered on desktop
+                    lightboxContent.style.top = '50vh';
+                    lightboxContent.style.transform = 'translate(-50%, -50%) scale(0.3)';
+                }
                 lightboxContent.style.zIndex = '10001';
                 lightboxContent.style.margin = '0';
                 
