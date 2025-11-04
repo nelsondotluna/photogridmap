@@ -239,55 +239,6 @@
             transform: scale(1.1);   /* Slight grow on hover */
         }
 
-        /* 🔄 NAVIGATION ARROWS */
-        .nav-arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            color: white;
-            font-size: 24px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 10002;
-            width: 50px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-            background-color: rgba(0,0,0,0.6);
-            border: 2px solid rgba(255,255,255,0.2);
-            transition: all 0.2s ease;
-            user-select: none;
-        }
-
-        .nav-arrow:hover {
-            background-color: rgba(0,0,0,0.8);
-            border-color: rgba(255,255,255,0.4);
-            transform: translateY(-50%) scale(1.05);
-        }
-
-        .nav-arrow.prev {
-            left: -25px;
-        }
-
-        .nav-arrow.next {
-            right: -25px;
-        }
-
-        .nav-arrow.disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-
-        /* Hide arrows on mobile to prevent accidental clicks */
-        @media screen and (max-width: 768px) {
-            .nav-arrow {
-                display: none;
-            }
-        }
-
         /* 🎭 MODERN MOTION GRAPHICS ANIMATIONS */
         .photo-item {
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* 🎪 Bouncy easing */
@@ -612,9 +563,7 @@
     <div id="lightbox" class="lightbox">
         <span class="close" id="closeLightbox">&times;</span>
         <div class="lightbox-content">
-            <div class="nav-arrow prev" id="prevImage">&#8249;</div>
             <img id="lightboxImg" src="" alt="">
-            <div class="nav-arrow next" id="nextImage">&#8250;</div>
         </div>
     </div>
 
@@ -669,15 +618,9 @@
                     if (e.target.id === 'lightbox') this.closeLightbox();
                 };
                 
-                // Navigation arrows
-                document.getElementById('prevImage').onclick = () => this.navigatePrevious();
-                document.getElementById('nextImage').onclick = () => this.navigateNext();
-                
                 // Keyboard events
                 document.onkeydown = (e) => {
                     if (e.key === 'Escape') this.closeLightbox();
-                    if (e.key === 'ArrowLeft') this.navigatePrevious();
-                    if (e.key === 'ArrowRight') this.navigateNext();
                 };
             }
 
@@ -916,7 +859,7 @@
                         img.loading = 'lazy';
                         
                         photoElement.appendChild(img);
-                        photoElement.addEventListener('click', () => this.openLightbox(photo, index));
+                        photoElement.addEventListener('click', () => this.openLightbox(photo));
                         
                         gallery.appendChild(photoElement);
                         
@@ -957,7 +900,7 @@
                                         // Only open lightbox if it was a quick tap without movement
                                         if (!hasMoved && touchDuration < 300) {
                                             e.preventDefault(); // Prevent any other actions
-                                            setTimeout(() => this.openLightbox(photo, index), 50);
+                                            setTimeout(() => this.openLightbox(photo), 50);
                                         }
                                     });
                                 } else {
@@ -973,14 +916,10 @@
                 }, 400); // Wait for all exit animations
             }
 
-            openLightbox(photo, photoIndex = null) {
+            openLightbox(photo) {
                 const lightbox = document.getElementById('lightbox');
                 const lightboxContent = lightbox.querySelector('.lightbox-content');
                 const lightboxImg = document.getElementById('lightboxImg');
-                
-                // Store current photo and index for navigation
-                this.currentPhoto = photo;
-                this.currentPhotoIndex = photoIndex !== null ? photoIndex : this.filteredPhotos.findIndex(p => p.id === photo.id);
                 
                 // Hide image immediately to prevent flash
                 lightboxImg.style.opacity = '0';
@@ -1055,9 +994,6 @@
                     { target: lightbox, event: 'wheel', handler: preventScroll }
                 ];
                 
-                // Setup navigation arrows
-                this.updateNavigationArrows();
-                
                 // Trigger animations with slight delay for smoother effect
                 setTimeout(() => {
                     lightbox.classList.add('show');
@@ -1130,38 +1066,6 @@
                     
                     // No need to restore scroll position since we didn't move it
                 }, 400);
-            }
-
-            updateNavigationArrows() {
-                const prevArrow = document.getElementById('prevImage');
-                const nextArrow = document.getElementById('nextImage');
-                
-                // Show/hide arrows based on position in filtered photos
-                if (this.currentPhotoIndex <= 0) {
-                    prevArrow.classList.add('disabled');
-                } else {
-                    prevArrow.classList.remove('disabled');
-                }
-                
-                if (this.currentPhotoIndex >= this.filteredPhotos.length - 1) {
-                    nextArrow.classList.add('disabled');
-                } else {
-                    nextArrow.classList.remove('disabled');
-                }
-            }
-
-            navigatePrevious() {
-                if (this.currentPhotoIndex > 0) {
-                    const prevPhoto = this.filteredPhotos[this.currentPhotoIndex - 1];
-                    this.openLightbox(prevPhoto, this.currentPhotoIndex - 1);
-                }
-            }
-
-            navigateNext() {
-                if (this.currentPhotoIndex < this.filteredPhotos.length - 1) {
-                    const nextPhoto = this.filteredPhotos[this.currentPhotoIndex + 1];
-                    this.openLightbox(nextPhoto, this.currentPhotoIndex + 1);
-                }
             }
 
             hideLoading() {
