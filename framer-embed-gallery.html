@@ -174,11 +174,13 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0.3);
-            padding: 20px;
-            width: 90%;
-            max-width: 800px;       /* 📏 Max lightbox width */
+            /* Remove padding to eliminate transparent click area */
+            padding: 0;
+            /* Size is now determined by the image itself */
             transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
             opacity: 0;
+            /* Display inline-block so it wraps tightly around image */
+            display: inline-block;
         }
 
         .lightbox-content.show {
@@ -187,13 +189,23 @@
         }
 
         .lightbox-content img {
-            width: 100%;
+            display: block;         /* Remove any inline spacing */
+            max-width: 90vw;        /* Responsive to viewport */
+            max-height: calc(100vh - 160px); /* Account for top positioning */
+            width: auto;
             height: auto;
-            max-height: 80vh;       /* 📏 Max height for large images */
             object-fit: contain;
             border-radius: 12px;    /* 🎨 More rounded corners */
             box-shadow: 0 25px 50px rgba(0,0,0,0.5);
             transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        /* Mobile image sizing */
+        @media screen and (max-width: 768px) {
+            .lightbox-content img {
+                max-height: calc(100vh - 120px); /* Account for mobile top positioning */
+                max-width: 95vw;
+            }
         }
 
         .lightbox-content img:hover {
@@ -202,24 +214,28 @@
 
         .close {
             position: absolute;
-            top: 10px;              /* 📍 Close button position from top */
-            right: 25px;            /* 📍 Close button position from right */
+            top: -15px;             /* 📍 Position above the image */
+            right: -15px;           /* 📍 Position to the right of the image */
             color: white;
-            font-size: 35px;        /* 📝 Close button size */
+            font-size: 30px;        /* 📝 Slightly smaller close button */
             font-weight: bold;
             cursor: pointer;
-            z-index: 10000;
-            width: 45px;            /* 📏 Close button width */
-            height: 45px;           /* 📏 Close button height */
+            z-index: 10001;         /* Above the image */
+            width: 40px;            /* 📏 Close button width */
+            height: 40px;           /* 📏 Close button height */
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            background-color: rgba(0,0,0,0.5);  /* 🎨 Close button background */
+            background-color: rgba(0,0,0,0.7);  /* 🎨 Darker background for visibility */
+            border: 2px solid rgba(255,255,255,0.2); /* Subtle white border */
+            transition: all 0.2s ease;
         }
 
         .close:hover {
-            background-color: rgba(0,0,0,0.8);  /* 🎨 Close button hover color */
+            background-color: rgba(0,0,0,0.9);  /* 🎨 Close button hover color */
+            border-color: rgba(255,255,255,0.4); /* Brighter border on hover */
+            transform: scale(1.1);   /* Slight grow on hover */
         }
 
         /* 🎭 MODERN MOTION GRAPHICS ANIMATIONS */
@@ -440,16 +456,16 @@
             }
             
             .close {
-                top: 15px;             /* 📍 Adjust close button on small screens */
-                right: 15px;
-                font-size: 28px;       /* 📝 Smaller close button */
-                width: 44px;           /* 📱 iOS recommended touch target */
-                height: 44px;
+                top: -10px;            /* 📍 Adjust close button on small screens - relative to image */
+                right: -10px;
+                font-size: 26px;       /* 📝 Smaller close button */
+                width: 38px;           /* 📱 Slightly smaller for mobile */
+                height: 38px;
             }
             
             .lightbox-content {
-                width: 98%;            /* 📱 Almost full width on small mobile */
-                padding: 5px;
+                /* No width/padding override - let it size to image */
+                padding: 0;
             }
             
             .lightbox-content img {
@@ -480,12 +496,12 @@
         }
         
         .lightbox-content {
-            /* Force true viewport centering */
+            /* Position at fixed distance from top instead of centering */
             position: fixed !important;
-            top: 50vh !important;
+            top: 80px !important;          /* Fixed distance from top */
             left: 50vw !important;
-            transform: translate(-50%, -50%) scale(0.3) !important;
-            max-height: 90vh !important;
+            transform: translate(-50%, 0) scale(0.3) !important;  /* Only center horizontally */
+            max-height: calc(100vh - 120px) !important;  /* Leave space at top and bottom */
             max-width: 95vw !important;
             margin: 0 !important;
             overflow: auto !important;
@@ -495,7 +511,15 @@
         }
         
         .lightbox-content.show {
-            transform: translate(-50%, -50%) scale(1) !important;
+            transform: translate(-50%, 0) scale(1) !important;  /* Only center horizontally */
+        }
+
+        /* Mobile specific positioning */
+        @media screen and (max-width: 768px) {
+            .lightbox-content {
+                top: 60px !important;     /* Closer to top on mobile */
+                max-height: calc(100vh - 100px) !important;
+            }
         }
 
         /* 📱 MOBILE TOUCH OPTIMIZATIONS */
@@ -931,11 +955,11 @@
                 lightbox.style.height = '100vh';
                 lightbox.style.zIndex = '10000';
                 
-                // Force content positioning using viewport percentages (not pixels)
+                // Force content positioning - fixed distance from top
                 lightboxContent.style.position = 'fixed';
                 lightboxContent.style.left = '50vw';
-                lightboxContent.style.top = '50vh';
-                lightboxContent.style.transform = 'translate(-50%, -50%) scale(0.3)';
+                lightboxContent.style.top = this.isMobile ? '60px' : '80px';
+                lightboxContent.style.transform = 'translate(-50%, 0) scale(0.3)';
                 lightboxContent.style.zIndex = '10001';
                 lightboxContent.style.margin = '0';
                 
@@ -975,13 +999,24 @@
                     lightboxContent.classList.add('show');
                 }, 10);
                 
-                // Prevent scrolling WITHOUT touching body overflow (preserves sticky nav)
+                // Enhanced mobile scroll prevention
                 document.body.style.touchAction = 'none'; // Prevent mobile scroll
                 document.body.style.userSelect = 'none'; // Prevent text selection
                 document.body.style.webkitUserSelect = 'none';
+                document.body.style.webkitTouchCallout = 'none'; // Prevent iOS callouts
+                document.body.style.webkitUserDrag = 'none'; // Prevent drag
+                
+                // Additional mobile-specific prevention
+                if (this.isMobile) {
+                    document.documentElement.style.touchAction = 'none';
+                    document.body.style.overscrollBehavior = 'none'; // Prevent pull-to-refresh
+                    document.documentElement.style.overscrollBehavior = 'none';
+                }
                 
                 // Store scroll position for restoration
                 lightbox.dataset.scrollY = scrollY;
+                
+                console.log('Lightbox opened - scrolling prevented');
             }
 
             closeLightbox() {
@@ -998,16 +1033,35 @@
                         target.removeEventListener(event, handler);
                     });
                     delete lightbox._preventScrollListeners;
+                    console.log('Event listeners removed');
                 }
+                
+                // Extra cleanup - remove any potential duplicate listeners
+                const cleanupPreventScroll = (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                };
+                document.removeEventListener('touchmove', cleanupPreventScroll);
+                document.removeEventListener('wheel', cleanupPreventScroll);
+                document.removeEventListener('scroll', cleanupPreventScroll);
+                window.removeEventListener('scroll', cleanupPreventScroll);
                 
                 // Hide after animation
                 setTimeout(() => {
                     lightbox.style.display = 'none';
                     
-                    // Restore scrolling without disrupting layout
-                    document.body.style.touchAction = 'auto';
-                    document.body.style.userSelect = 'auto';
-                    document.body.style.webkitUserSelect = 'auto';
+                    // Restore all scroll and touch properties completely
+                    document.body.style.touchAction = '';
+                    document.body.style.userSelect = '';
+                    document.body.style.webkitUserSelect = '';
+                    document.body.style.webkitTouchCallout = '';
+                    document.body.style.webkitUserDrag = '';
+                    document.body.style.overscrollBehavior = '';
+                    document.documentElement.style.touchAction = '';
+                    document.documentElement.style.overscrollBehavior = '';
+                    
+                    console.log('Lightbox closed - scrolling restored');
                     
                     // No need to restore scroll position since we didn't move it
                 }, 400);
