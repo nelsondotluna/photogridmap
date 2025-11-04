@@ -531,7 +531,7 @@
         /* Mobile specific positioning */
         @media screen and (max-width: 768px) {
             .lightbox-content {
-                top: 80px !important;         /* Fixed distance from top on mobile */
+                top: 160px !important;        /* Fixed distance from top on mobile */
                 transform: translate(-50%, 0) scale(0.3) !important; /* Only center horizontally */
                 max-height: 70vh !important;  /* Conservative height for mobile */
                 max-width: 90vw !important;   /* Conservative width for mobile */
@@ -980,7 +980,7 @@
                 lightboxContent.style.left = '50vw';
                 if (this.isMobile) {
                     // Fixed distance from top on mobile
-                    lightboxContent.style.top = '80px';
+                    lightboxContent.style.top = '160px';
                     lightboxContent.style.transform = 'translate(-50%, 0) scale(0.3)';
                 } else {
                     // Centered on desktop
