@@ -42,16 +42,21 @@
         /* 🖼️ MAIN CONTAINER - Framer optimized */
         .gallery-container {
             width: 100%;              /* 📏 Full width to fit Framer container */
+            min-height: 100vh;        /* 📏 Ensure sufficient height for sticky behavior */
             margin: 0;                /* No auto margins for embed */
             padding: 0;               /* 📦 No padding - let Framer control spacing */
             font-family: inherit;     /* 📝 Inherit Framer's font */
             color: inherit;           /* 🎨 Inherit Framer's text color */
+            position: relative;       /* 📍 Establish positioning context */
         }
 
-        /* 📋 FILTER SECTION - STICKY */
+        /* 📋 FILTER SECTION - ROBUST STICKY */
         .filter-container {
             position: sticky;        /* 📌 Stick to top when scrolling */
+            position: -webkit-sticky; /* 🍎 Safari fallback */
             top: 0;                  /* 📏 Stick to very top */
+            left: 0;                 /* 📏 Ensure proper positioning */
+            right: 0;                /* 📏 Full width */
             z-index: 100;            /* 📏 Above photos but below lightbox */
             background: linear-gradient(180deg, 
                         rgba(255,255,255,0.95) 0%, 
@@ -64,6 +69,9 @@
             text-align: center;      /* Center filter elements */
             border-bottom: 1px solid rgba(0,0,0,0.1); /* 📏 Subtle bottom border */
             transition: all 0.3s ease; /* 🎭 Smooth transitions */
+            /* Ensure sticky behavior works */
+            width: 100%;
+            box-sizing: border-box;
         }
 
         /*  Enhanced sticky state */
@@ -617,9 +625,27 @@
                 const filterContainer = document.querySelector('.filter-container');
                 let isScrolled = false;
                 
-                window.addEventListener('scroll', () => {
+                // Enhanced sticky monitoring
+                const checkStickyBehavior = () => {
                     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    const rect = filterContainer.getBoundingClientRect();
                     
+                    // Check if filter should be at top but isn't (sticky failed)
+                    if (scrollTop > 100 && rect.top > 10) {
+                        console.log('Sticky nav unstuck - forcing position');
+                        // Force sticky behavior with fallback positioning
+                        filterContainer.style.position = 'fixed';
+                        filterContainer.style.top = '0';
+                        filterContainer.style.width = '100%';
+                        filterContainer.style.zIndex = '100';
+                    } else if (scrollTop <= 100 && filterContainer.style.position === 'fixed') {
+                        // Restore normal sticky when back at top
+                        filterContainer.style.position = 'sticky';
+                        filterContainer.style.top = '0';
+                        filterContainer.style.width = '100%';
+                    }
+                    
+                    // Original scrolled class logic
                     if (scrollTop > 20 && !isScrolled) {
                         filterContainer.classList.add('scrolled');
                         isScrolled = true;
@@ -627,7 +653,22 @@
                         filterContainer.classList.remove('scrolled');
                         isScrolled = false;
                     }
+                };
+                
+                // Monitor scroll with throttling for performance
+                let ticking = false;
+                window.addEventListener('scroll', () => {
+                    if (!ticking) {
+                        requestAnimationFrame(() => {
+                            checkStickyBehavior();
+                            ticking = false;
+                        });
+                        ticking = true;
+                    }
                 });
+                
+                // Also check on window resize
+                window.addEventListener('resize', checkStickyBehavior);
             }
 
             setupEventListeners() {
