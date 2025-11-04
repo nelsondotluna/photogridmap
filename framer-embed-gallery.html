@@ -193,7 +193,7 @@
             object-fit: contain;
             border-radius: 12px;    /* 🎨 More rounded corners */
             box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, opacity 0.3s ease;
         }
 
         .lightbox-content img:hover {
@@ -461,26 +461,38 @@
         /* 📱 MOBILE LIGHTBOX CENTERING FIX */
         @media screen and (max-width: 768px) {
             .lightbox {
-                /* Fix for mobile viewport issues */
+                /* Fix for mobile viewport issues - complete reset */
                 position: fixed !important;
                 top: 0 !important;
                 left: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
                 width: 100vw !important;
                 height: 100vh !important;
                 height: 100dvh !important; /* Dynamic viewport height for mobile */
-                overflow: hidden;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: hidden !important;
+                z-index: 9999 !important;
+                /* Reset any inherited positioning */
+                transform: none !important;
+                box-sizing: border-box !important;
             }
             
             .lightbox-content {
-                /* Force proper centering on mobile */
+                /* Force proper centering on mobile - complete reset */
                 position: fixed !important;
                 top: 50% !important;
                 left: 50% !important;
                 transform: translate(-50%, -50%) scale(0.3) !important;
-                max-height: 90vh;
-                max-width: 95vw;
-                overflow: auto;
-                z-index: 1001;
+                max-height: 90vh !important;
+                max-width: 95vw !important;
+                margin: 0 !important;
+                overflow: auto !important;
+                z-index: 10000 !important;
+                box-sizing: border-box !important;
+                /* Ensure no parent influence */
+                display: block !important;
             }
             
             .lightbox-content.show {
@@ -886,15 +898,33 @@
                 const lightboxContent = lightbox.querySelector('.lightbox-content');
                 const lightboxImg = document.getElementById('lightboxImg');
                 
-                // Set up the image
-                lightboxImg.src = photo.url_l || photo.url_m;
-                lightboxImg.alt = photo.title;
+                // Hide image immediately to prevent flash
+                lightboxImg.style.opacity = '0';
+                lightboxImg.style.visibility = 'hidden';
                 
-                // Show lightbox with animation
+                // Create new image to preload
+                const newImg = new Image();
+                newImg.onload = () => {
+                    // Once loaded, set the source and show the image
+                    lightboxImg.src = newImg.src;
+                    lightboxImg.alt = photo.title;
+                    lightboxImg.style.visibility = 'visible';
+                    lightboxImg.style.opacity = '1';
+                };
+                newImg.src = photo.url_l || photo.url_m;
+                
+                // Show lightbox with animation - ensure it's attached to body
+                if (lightbox.parentNode !== document.body) {
+                    document.body.appendChild(lightbox);
+                }
                 lightbox.style.display = 'block';
                 
-                // Mobile centering fix - force proper positioning
+                // Mobile centering fix - calculate true viewport center
                 if (this.isMobile) {
+                    // Get actual viewport dimensions
+                    const viewportHeight = window.innerHeight;
+                    const viewportWidth = window.innerWidth;
+                    
                     // Ensure proper mobile viewport positioning
                     lightbox.style.position = 'fixed';
                     lightbox.style.top = '0';
@@ -903,15 +933,22 @@
                     lightbox.style.height = '100vh';
                     lightbox.style.zIndex = '1000';
                     
-                    // Force content positioning
+                    // Calculate true center position in pixels
+                    const centerX = viewportWidth / 2;
+                    const centerY = viewportHeight / 2;
+                    
+                    // Force content positioning with pixel values
                     lightboxContent.style.position = 'fixed';
-                    lightboxContent.style.top = '50%';
-                    lightboxContent.style.left = '50%';
+                    lightboxContent.style.left = centerX + 'px';
+                    lightboxContent.style.top = centerY + 'px';
                     lightboxContent.style.transform = 'translate(-50%, -50%) scale(0.3)';
                     lightboxContent.style.zIndex = '1001';
+                    lightboxContent.style.margin = '0';
                     
                     // Force a reflow to ensure positioning is applied
                     lightboxContent.offsetHeight;
+                    
+                    console.log('Mobile lightbox center:', centerX, centerY, 'Viewport:', viewportWidth, viewportHeight);
                 }
                 
                 // Trigger animations with slight delay for smoother effect
