@@ -458,6 +458,36 @@
             }
         }
 
+        /* 📱 MOBILE LIGHTBOX CENTERING FIX */
+        @media screen and (max-width: 768px) {
+            .lightbox {
+                /* Fix for mobile viewport issues */
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                height: 100dvh !important; /* Dynamic viewport height for mobile */
+                overflow: hidden;
+            }
+            
+            .lightbox-content {
+                /* Force proper centering on mobile */
+                position: fixed !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) scale(0.3) !important;
+                max-height: 90vh;
+                max-width: 95vw;
+                overflow: auto;
+                z-index: 1001;
+            }
+            
+            .lightbox-content.show {
+                transform: translate(-50%, -50%) scale(1) !important;
+            }
+        }
+
         /* 📱 MOBILE TOUCH OPTIMIZATIONS */
         @media (hover: none) and (pointer: coarse) {
             /* This targets touch devices */
@@ -863,14 +893,40 @@
                 // Show lightbox with animation
                 lightbox.style.display = 'block';
                 
+                // Mobile centering fix - force proper positioning
+                if (this.isMobile) {
+                    // Ensure proper mobile viewport positioning
+                    lightbox.style.position = 'fixed';
+                    lightbox.style.top = '0';
+                    lightbox.style.left = '0';
+                    lightbox.style.width = '100vw';
+                    lightbox.style.height = '100vh';
+                    lightbox.style.zIndex = '1000';
+                    
+                    // Force content positioning
+                    lightboxContent.style.position = 'fixed';
+                    lightboxContent.style.top = '50%';
+                    lightboxContent.style.left = '50%';
+                    lightboxContent.style.transform = 'translate(-50%, -50%) scale(0.3)';
+                    lightboxContent.style.zIndex = '1001';
+                    
+                    // Force a reflow to ensure positioning is applied
+                    lightboxContent.offsetHeight;
+                }
+                
                 // Trigger animations with slight delay for smoother effect
                 setTimeout(() => {
                     lightbox.classList.add('show');
                     lightboxContent.classList.add('show');
                 }, 10);
                 
-                // Prevent body scroll
+                // Prevent body scroll and handle mobile viewport
                 document.body.style.overflow = 'hidden';
+                if (this.isMobile) {
+                    // Prevent iOS Safari bounce scrolling
+                    document.body.style.position = 'fixed';
+                    document.body.style.width = '100%';
+                }
             }
 
             closeLightbox() {
@@ -884,7 +940,12 @@
                 // Hide after animation
                 setTimeout(() => {
                     lightbox.style.display = 'none';
+                    // Reset body scroll and mobile positioning
                     document.body.style.overflow = 'auto';
+                    if (this.isMobile) {
+                        document.body.style.position = 'static';
+                        document.body.style.width = 'auto';
+                    }
                 }, 400);
             }
 
