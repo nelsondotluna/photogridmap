@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flickr API Debug Test</title>
+</head>
+<body>
+    <h1>Flickr API Debug Test</h1>
+    <div id="results"></div>
+    <div id="error" style="display:none; color:red;"></div>
+
+    <script>
+        // Test the exact same API call
+        const apiKey = 'cfa92568a91ee1d02ecb512ae6eeb541';
+        const albumId = '72177720330059990';
+        const userId = '202863354@N08';
+        
+        console.log('Testing Flickr API with:');
+        console.log('API Key:', apiKey);
+        console.log('Album ID:', albumId);
+        console.log('User ID:', userId);
+        
+        function testFlickrAPI() {
+            const timestamp = Date.now();
+            const callbackName = `flickrCallback_${timestamp}`;
+            
+            window[callbackName] = (data) => {
+                console.log('Flickr API Response:', data);
+                
+                const resultsDiv = document.getElementById('results');
+                const errorDiv = document.getElementById('error');
+                
+                if (data.stat === 'ok') {
+                    resultsDiv.innerHTML = `
+                        <h2>✅ SUCCESS!</h2>
+                        <p><strong>Album:</strong> ${data.photoset.title}</p>
+                        <p><strong>Photos found:</strong> ${data.photoset.photo.length}</p>
+                        <p><strong>Sample photo:</strong> ${data.photoset.photo[0]?.title || 'No photos'}</p>
+                        <p><strong>Sample tags:</strong> ${data.photoset.photo[0]?.tags || 'No tags'}</p>
+                        <h3>First Photo Details:</h3>
+                        <pre>${JSON.stringify(data.photoset.photo[0], null, 2)}</pre>
+                    `;
+                } else {
+                    errorDiv.style.display = 'block';
+                    errorDiv.innerHTML = `
+                        <h2>❌ API ERROR</h2>
+                        <p><strong>Status:</strong> ${data.stat}</p>
+                        <p><strong>Code:</strong> ${data.code}</p>
+                        <p><strong>Message:</strong> ${data.message}</p>
+                    `;
+                }
+                
+                // Cleanup
+                delete window[callbackName];
+                document.head.removeChild(script);
+            };
+            
+            const script = document.createElement('script');
+            script.src = `https://www.flickr.com/services/rest/?method=flickr.photosets.getPhotos&api_key=${apiKey}&photoset_id=${albumId}&user_id=${userId}&extras=tags,url_m,url_l&format=json&jsoncallback=${callbackName}&_=${timestamp}`;
+            
+            console.log('API URL:', script.src);
+            
+            script.onerror = () => {
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').innerHTML = `
+                    <h2>❌ SCRIPT ERROR</h2>
+                    <p>Failed to load Flickr API script</p>
+                `;
+                delete window[callbackName];
+                document.head.removeChild(script);
+            };
+            
+            document.head.appendChild(script);
+        }
+        
+        // Run the test when page loads
+        window.addEventListener('DOMContentLoaded', testFlickrAPI);
+    </script>
+</body>
+</html>
