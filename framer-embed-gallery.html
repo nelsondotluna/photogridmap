@@ -39,97 +39,6 @@
             box-sizing: border-box;
         }
 
-        /* 🎨 CSS CUSTOM PROPERTIES FOR THEMING */
-        :root {
-            /* Color Palette */
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8f9fa;
-            --text-primary: #333333;
-            --text-secondary: #666666;
-            --text-muted: #999999;
-            --accent-color: #007AFF;
-            --accent-hover: #0056cc;
-            --border-color: rgba(0,0,0,0.1);
-            --shadow-light: rgba(0,0,0,0.05);
-            --shadow-medium: rgba(0,0,0,0.15);
-            --shadow-heavy: rgba(0,0,0,0.25);
-            
-            /* Spacing */
-            --spacing-xs: 4px;
-            --spacing-sm: 8px;
-            --spacing-md: 12px;
-            --spacing-lg: 16px;
-            --spacing-xl: 24px;
-            --spacing-xxl: 32px;
-            
-            /* Border Radius */
-            --radius-sm: 2px;
-            --radius-md: 4px;
-            --radius-lg: 8px;
-            --radius-xl: 12px;
-            --radius-full: 50%;
-            
-            /* Typography */
-            --font-size-sm: 0.875rem;
-            --font-size-md: 1rem;
-            --font-size-lg: 1.125rem;
-            --font-size-xl: 1.25rem;
-            
-            /* Transitions */
-            --transition-fast: 0.15s ease;
-            --transition-normal: 0.3s ease;
-            --transition-slow: 0.5s ease;
-            --transition-bounce: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            
-            /* Z-index layers */
-            --z-base: 1;
-            --z-sticky: 100;
-            --z-modal: 1000;
-            --z-tooltip: 1100;
-        }
-
-        /* 🌙 DARK MODE THEME */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg-primary: #1a1a1a;
-                --bg-secondary: #2d2d2d;
-                --text-primary: #ffffff;
-                --text-secondary: #cccccc;
-                --text-muted: #888888;
-                --border-color: rgba(255,255,255,0.1);
-                --shadow-light: rgba(0,0,0,0.3);
-                --shadow-medium: rgba(0,0,0,0.5);
-                --shadow-heavy: rgba(0,0,0,0.7);
-            }
-        }
-
-        /* 🔄 LOADING SKELETON ANIMATIONS */
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-
-        .skeleton {
-            background: linear-gradient(90deg, 
-                var(--bg-secondary) 25%, 
-                rgba(255,255,255,0.1) 50%, 
-                var(--bg-secondary) 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-            border-radius: var(--radius-sm);
-        }
-
-        .photo-skeleton {
-            aspect-ratio: 1;
-            position: relative;
-            overflow: hidden;
-        }
-
         /* 🖼️ MAIN CONTAINER - Framer optimized */
         .gallery-container {
             width: 100%;              /* 📏 Full width to fit Framer container */
@@ -137,41 +46,47 @@
             margin: 0;                /* No auto margins for embed */
             padding: 0;               /* 📦 No padding - let Framer control spacing */
             font-family: inherit;     /* 📝 Inherit Framer's font */
-            color: var(--text-primary);
-            background-color: var(--bg-primary);
+            color: inherit;           /* 🎨 Inherit Framer's text color */
             position: relative;       /* 📍 Establish positioning context */
-            transition: background-color var(--transition-normal), color var(--transition-normal);
         }
 
-        /* 📱 ENHANCED RESPONSIVE BREAKPOINTS */
-        /* Tablet landscape: 1024px - 1200px */
-        /* Tablet portrait: 768px - 1024px */  
-        /* Mobile large: 480px - 768px */
-        /* Mobile small: 320px - 480px */
-        /* Mobile tiny: < 320px */
-
-        /* 📋 FILTER SECTION - SIMPLIFIED STICKY */
+        /* 📋 FILTER SECTION - ROBUST STICKY */
         .filter-container {
             position: sticky;        /* 📌 Stick to top when scrolling */
             position: -webkit-sticky; /* 🍎 Safari fallback */
             top: 0;                  /* 📏 Stick to very top */
-            z-index: var(--z-sticky); /* 📏 Above photos but below lightbox */
-            background: rgba(255,255,255,0.95); /* 🎨 Simple background */
+            left: 0;                 /* 📏 Ensure proper positioning */
+            right: 0;                /* 📏 Full width */
+            z-index: 100;            /* 📏 Above photos but below lightbox */
+            background: linear-gradient(180deg, 
+                        rgba(255,255,255,0.95) 0%, 
+                        rgba(255,255,255,0.9) 80%, 
+                        rgba(255,255,255,0.7) 100%); /* 🎨 Subtle gradient background */
             backdrop-filter: blur(10px); /* 🎪 Modern blur effect */
             -webkit-backdrop-filter: blur(10px); /* 🍎 Safari support */
-            padding: 15px 0; /* 📦 Fixed padding around filters */
-            margin-bottom: 20px; /* 📏 Fixed space below filters */
+            padding: 15px 0;         /* 📦 Padding around filters */
+            margin-bottom: 20px;     /* 📏 Space below filters */
             text-align: center;      /* Center filter elements */
-            border-bottom: 1px solid var(--border-color); /* 📏 Subtle bottom border */
-            transition: all var(--transition-normal); /* 🎭 Smooth transitions */
+            border-bottom: 1px solid rgba(0,0,0,0.1); /* 📏 Subtle bottom border */
+            transition: all 0.3s ease; /* 🎭 Smooth transitions */
+            /* Ensure sticky behavior works */
             width: 100%;
             box-sizing: border-box;
         }
 
-        /* 🌙 Dark mode filter container */
-        @media (prefers-color-scheme: dark) {
+        /* 📱 FORCE MOBILE STICKY BEHAVIOR */
+        @media screen and (max-width: 768px) {
             .filter-container {
-                background: rgba(26,26,26,0.95); /* 🎨 Simple dark background */
+                position: -webkit-sticky !important;
+                position: sticky !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                z-index: 1000 !important;
+                width: 100% !important;
+                /* Additional mobile-specific fixes */
+                transform: translateZ(0); /* Force hardware acceleration */
+                will-change: transform;   /* Optimize for position changes */
             }
         }
 
@@ -188,159 +103,42 @@
             gap: 10px;              /* 📏 Space between filter items */
         }
 
-        /* 🏷️ FILTER TAGS - Enhanced for touch devices */
+        /* 🏷️ FILTER TAGS - Text style for Framer */
         .filter-tag {
             background: none;        /* No background - just text */
             border: none;           /* No border */
-            padding: var(--spacing-md) var(--spacing-lg); /* 📦 Better touch targets */
-            min-height: 44px;       /* � Minimum touch target size */
-            min-width: 44px;        /* 📱 Minimum touch target size */
+            padding: 8px 12px;      /* 📦 Padding around text */
             cursor: pointer;
-            font-size: var(--font-size-md); /* 📝 Consistent font size */
-            color: var(--text-secondary); /* 🎨 Use theme color */
+            font-size: inherit;     /* 📝 Inherit Framer font size */
+            color: inherit;         /* 🎨 Inherit Framer text color */
             text-decoration: none;
-            transition: all var(--transition-fast);
+            transition: opacity 0.2s ease;
             font-family: inherit;
-            border-radius: var(--radius-md);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            user-select: none;      /* Prevent text selection */
-            -webkit-tap-highlight-color: transparent; /* Remove tap highlight */
         }
 
-        .filter-tag:hover,
-        .filter-tag:focus {
-            color: var(--accent-color);
-            background-color: var(--shadow-light);
-            transform: translateY(-1px);
+        .filter-tag:hover {
+            opacity: 0.7;           /* 🎨 Subtle hover effect */
         }
 
         .filter-tag.active {
-            color: var(--accent-color); /* 🎨 Active filter color */
-            font-weight: 600;        /* Make active filters semi-bold */
-            background-color: var(--shadow-light);
-            box-shadow: 0 2px 8px var(--shadow-medium);
-        }
-
-        .filter-tag:active {
-            transform: translateY(0px); /* Quick feedback on tap */
-        }
-
-        /* ⬆️ BACK TO TOP BUTTON */
-        .back-to-top {
-            position: fixed;
-            bottom: var(--spacing-xl);
-            right: var(--spacing-xl);
-            width: 56px;
-            height: 56px;
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: var(--radius-full);
-            cursor: pointer;
-            font-size: var(--font-size-xl);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 16px var(--shadow-medium);
-            transition: all var(--transition-normal);
-            z-index: var(--z-sticky);
-            transform: translateY(100px);
-            opacity: 0;
-            user-select: none;
-        }
-
-        .back-to-top.visible {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        .back-to-top:hover {
-            background-color: var(--accent-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px var(--shadow-heavy);
-        }
-
-        .back-to-top:active {
-            transform: translateY(0);
-        }
-
-        /* 📱 Mobile adjustments for back to top */
-        @media (max-width: 768px) {
-            .back-to-top {
-                bottom: var(--spacing-lg);
-                right: var(--spacing-lg);
-                width: 48px;
-                height: 48px;
-                font-size: var(--font-size-lg);
-            }
+            color: #007AFF;         /* 🎨 Active filter color - change to match your brand */
+            font-weight: bold;      /* Make active filters bold */
         }
 
         /* ➖ FILTER SEPARATORS */
         .filter-separator {
-            color: var(--text-secondary); /* 🎨 Use theme color */
-            font-weight: 600;
-            padding: var(--spacing-sm) var(--spacing-xs);
-            font-size: var(--font-size-md);
+            color: inherit;         /* 🎨 Match text color */
+            font-weight: bold;
+            padding: 8px 4px;
+            font-size: inherit;
         }
 
-        /* 🖼️ RESPONSIVE PHOTO GRID */
+        /* 🖼️ PHOTO GRID */
         .gallery-grid {
             display: grid;
-            gap: var(--spacing-xs); /* 📏 Consistent gap using CSS custom properties */
+            grid-template-columns: repeat(4, 1fr);  /* 📐 4 columns desktop - change number for different layout */
+            gap: 4px;                               /* 📏 Gap between photos - adjust spacing */
             width: 100%;
-            /* Desktop: 5 columns for wider screens */
-            grid-template-columns: repeat(5, 1fr);
-        }
-
-        /* � ENHANCED RESPONSIVE BREAKPOINTS */
-        
-        /* Large Desktop: 1400px+ = 6 columns */
-        @media (min-width: 1400px) {
-            .gallery-grid {
-                grid-template-columns: repeat(6, 1fr);
-                gap: var(--spacing-sm);
-            }
-        }
-
-        /* Desktop: 1200px - 1400px = 5 columns */
-        @media (max-width: 1399px) and (min-width: 1200px) {
-            .gallery-grid {
-                grid-template-columns: repeat(5, 1fr);
-            }
-        }
-
-        /* Tablet Landscape: 1024px - 1199px = 4 columns */
-        @media (max-width: 1199px) and (min-width: 1024px) {
-            .gallery-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-
-        /* Tablet Portrait: 768px - 1023px = 3 columns */
-        @media (max-width: 1023px) and (min-width: 768px) {
-            .gallery-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: var(--spacing-sm);
-            }
-        }
-
-        /* Mobile Large: 480px - 767px = 2 columns */
-        @media (max-width: 767px) and (min-width: 480px) {
-            .gallery-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: var(--spacing-xs);
-            }
-        }
-
-        /* Mobile Small: < 480px = 2 columns with smaller gap */
-        @media (max-width: 479px) {
-            .gallery-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 2px;
-            }
         }
 
         .photo-item {
@@ -348,69 +146,22 @@
             aspect-ratio: 1;        /* 📐 Square photos - change to 4/3 or 16/9 for rectangles */
             overflow: hidden;
             cursor: pointer;
-            border-radius: var(--radius-sm); /* 🎨 Use CSS custom property */
-            transition: all var(--transition-bounce); /* 🎪 Bouncy easing */
-            border: 1px solid var(--border-color); /* ❄️ Use theme border color */
-            background-color: var(--bg-secondary);
-            /* Performance optimizations */
-            transform: translateZ(0); /* Force hardware acceleration */
-            will-change: transform;   /* Optimize for transform changes */
+            border-radius: 2px;     /* 🎨 Sharp, minimal corners */
+            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            border: 1px solid rgba(0,0,0,0.05); /* ❄️ Subtle Nordic border */
         }
 
         .photo-item:hover {
-            transform: translateY(-2px) scale(1.02); /* 🎪 Enhanced lift and slight scale */
-            box-shadow: 0 8px 25px var(--shadow-medium); /* 🌟 Beautiful shadow */
-            border-color: var(--border-color);
-        }
-
-        .photo-item:active {
-            transform: translateY(0px) scale(0.98); /* Quick feedback on click */
+            transform: translateY(-1px); /* ❄️ Minimal lift - no scaling */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* ❄️ Clean shadow */
+            border-color: rgba(0,0,0,0.1);
         }
 
         .photo-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;      /* 📐 How image fills container */
-            transition: all var(--transition-normal);
-            /* Lazy loading states */
-            opacity: 0;
-            transform: scale(1.1);
-        }
-
-        .photo-item img.loaded {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        /* 🔄 Loading state for images */
-        .photo-item.loading::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, 
-                transparent 25%, 
-                rgba(255,255,255,0.1) 50%, 
-                transparent 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-        }
-
-        /* 🚫 Error state for failed images */
-        .photo-item.error {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-muted);
-            font-size: var(--font-size-sm);
-        }
-
-        .photo-item.error::after {
-            content: '📷';
-            font-size: 2rem;
-            opacity: 0.3;
+            transition: opacity 0.3s ease;
         }
 
         /* 🔄 LOADING & ERROR STATES */
@@ -425,32 +176,17 @@
             color: #ff4444;         /* 🎨 Error color - red */
         }
 
-        /* 🖼️ ENHANCED LIGHTBOX WITH DARK MODE */
+        /* 🖼️ LIGHTBOX WITH MODERN ANIMATIONS */
         .lightbox {
             display: none;
             position: fixed;
-            z-index: var(--z-modal); /* 📏 Use CSS custom property */
+            z-index: 9999;          /* 📏 High z-index to appear above Framer content */
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
             background-color: rgba(0,0,0,0);  /* Start transparent */
-            transition: background-color var(--transition-slow);
-            backdrop-filter: blur(0px);
-            -webkit-backdrop-filter: blur(0px);
-        }
-
-        .lightbox.active {
-            background-color: rgba(0,0,0,0.9);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-
-        /* 🌙 Dark mode lightbox */
-        @media (prefers-color-scheme: dark) {
-            .lightbox.active {
-                background-color: rgba(0,0,0,0.95);
-            }
+            transition: background-color 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .lightbox.show {
@@ -866,9 +602,6 @@
         </div>
     </div>
 
-    <!-- ⬆️ Back to top button -->
-    <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
-
     <!-- Lightbox -->
     <div id="lightbox" class="lightbox">
         <span class="close" id="closeLightbox">&times;</span>
@@ -889,109 +622,70 @@
                 this.allTags = new Set();
                 this.activeTags = new Set();
                 
-                // 🎨 Theme and device detection
-                this.prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                this.prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-                this.supportsWebP = this.checkWebPSupport();
-                
                 this.init();
             }
 
-            // 🔧 UTILITY METHODS FOR NEW FEATURES
-            
-            checkWebPSupport() {
-                // Create a tiny WebP image to test support
-                const webP = 'data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAACyAgCdASoCAAIALmk0mk0iIiIiIgBoSygABc6WWgAA/veff/0PP8bA//LwYAAA';
-                const img = new Image();
-                return new Promise(resolve => {
-                    img.onload = img.onerror = () => resolve(img.height === 2);
-                    img.src = webP;
-                });
-            }
-
             init() {
-                console.log('🚀 Initializing Flickr Gallery...');
-                console.log('📱 Mobile device:', this.isMobile = window.innerWidth <= 480);
-                console.log('🔑 API Key:', this.apiKey ? 'Present' : 'Missing');
-                console.log('📁 Album ID:', this.albumId);
-                console.log('👤 User ID:', this.userId);
-                
+                this.isMobile = window.innerWidth <= 480;
                 this.setupEventListeners();
-                this.setupBackToTopButton();
                 this.setupStickyFilters();
-                this.setupThemeDetection();
                 this.loadPhotos();
                 
-                // Listen for orientation changes and theme changes
+                // Listen for orientation changes
                 window.addEventListener('resize', () => {
                     this.isMobile = window.innerWidth <= 480;
                 });
-                
-                // Listen for theme changes
-                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-                    this.prefersDarkMode = e.matches;
-                    this.updateTheme();
-                });
-            }
-
-            // ⬆️ BACK TO TOP BUTTON SETUP
-            setupBackToTopButton() {
-                const backToTopButton = document.getElementById('backToTop');
-                
-                if (backToTopButton) {
-                    // Show/hide based on scroll position
-                    window.addEventListener('scroll', () => {
-                        if (window.pageYOffset > 300) {
-                            backToTopButton.classList.add('visible');
-                        } else {
-                            backToTopButton.classList.remove('visible');
-                        }
-                    });
-                    
-                    // Smooth scroll to top
-                    backToTopButton.addEventListener('click', () => {
-                        window.scrollTo({
-                            top: 0,
-                            behavior: 'smooth'
-                        });
-                        
-                        // Add haptic feedback if supported
-                        if (navigator.vibrate) {
-                            navigator.vibrate(50);
-                        }
-                    });
-                }
-            }
-
-            // 🎨 THEME DETECTION SETUP
-            setupThemeDetection() {
-                this.updateTheme();
-                
-                // Watch for system theme changes
-                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-                    this.prefersDarkMode = e.matches;
-                    this.updateTheme();
-                });
-            }
-
-            // 🎨 UPDATE THEME
-            updateTheme() {
-                const root = document.documentElement;
-                if (this.prefersDarkMode) {
-                    root.setAttribute('data-theme', 'dark');
-                } else {
-                    root.setAttribute('data-theme', 'light');
-                }
             }
 
             setupStickyFilters() {
                 const filterContainer = document.querySelector('.filter-container');
                 let isScrolled = false;
+                let isMobile = window.innerWidth <= 768;
                 
-                // Simple scroll detection for visual effects only
-                const checkScrolled = () => {
+                // Enhanced sticky monitoring with mobile-first approach
+                const checkStickyBehavior = () => {
                     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    const rect = filterContainer.getBoundingClientRect();
                     
+                    // More aggressive mobile sticky enforcement
+                    if (isMobile) {
+                        // On mobile, always force fixed positioning when scrolled
+                        if (scrollTop > 50) {
+                            if (filterContainer.style.position !== 'fixed') {
+                                console.log('Mobile: Forcing fixed navigation');
+                                filterContainer.style.position = 'fixed';
+                                filterContainer.style.top = '0';
+                                filterContainer.style.left = '0';
+                                filterContainer.style.right = '0';
+                                filterContainer.style.width = '100%';
+                                filterContainer.style.zIndex = '1000';
+                                filterContainer.style.boxSizing = 'border-box';
+                            }
+                        } else if (scrollTop <= 50) {
+                            // Only restore sticky when very close to top
+                            filterContainer.style.position = 'sticky';
+                            filterContainer.style.left = '';
+                            filterContainer.style.right = '';
+                        }
+                    } else {
+                        // Desktop behavior - check if filter should be at top but isn't
+                        if (scrollTop > 100 && rect.top > 10) {
+                            console.log('Desktop: Sticky nav unstuck - forcing position');
+                            filterContainer.style.position = 'fixed';
+                            filterContainer.style.top = '0';
+                            filterContainer.style.left = '0';
+                            filterContainer.style.right = '0';
+                            filterContainer.style.width = '100%';
+                            filterContainer.style.zIndex = '1000';
+                        } else if (scrollTop <= 100 && filterContainer.style.position === 'fixed') {
+                            // Restore normal sticky when back at top
+                            filterContainer.style.position = 'sticky';
+                            filterContainer.style.left = '';
+                            filterContainer.style.right = '';
+                        }
+                    }
+                    
+                    // Original scrolled class logic
                     if (scrollTop > 20 && !isScrolled) {
                         filterContainer.classList.add('scrolled');
                         isScrolled = true;
@@ -1001,8 +695,23 @@
                     }
                 };
                 
-                // Simple scroll listener - no position manipulation
-                window.addEventListener('scroll', checkScrolled);
+                // Monitor scroll with throttling for performance
+                let ticking = false;
+                window.addEventListener('scroll', () => {
+                    if (!ticking) {
+                        requestAnimationFrame(() => {
+                            checkStickyBehavior();
+                            ticking = false;
+                        });
+                        ticking = true;
+                    }
+                });
+                
+                // Update mobile detection on resize
+                window.addEventListener('resize', () => {
+                    isMobile = window.innerWidth <= 768;
+                    checkStickyBehavior();
+                });
             }
 
             setupEventListeners() {
@@ -1019,48 +728,62 @@
             }
 
             async loadPhotos() {
-                console.log('🔄 Starting to load photos...');
                 try {
+                    console.log('🔄 Starting to load photos from Flickr...');
+                    console.log('Configuration:', {
+                        apiKey: this.apiKey,
+                        albumId: this.albumId,
+                        userId: this.userId
+                    });
+                    
                     const photos = await this.fetchFlickrPhotos();
-                    console.log('✅ Photos fetched successfully:', photos.length);
                     this.processPhotos(photos);
                 } catch (error) {
                     console.error('❌ Error loading Flickr photos:', error);
+                    console.error('Error details:', {
+                        message: error.message,
+                        stack: error.stack
+                    });
                     this.showError();
                 }
             }
 
             // Flickr API call using JSONP to avoid CORS issues
             async fetchFlickrPhotos() {
-                console.log('🌐 Fetching from Flickr API...');
                 return new Promise((resolve, reject) => {
+                    console.log('🌐 Making Flickr API call...');
+                    
                     // Add timestamp to prevent caching issues
                     const timestamp = Date.now();
                     const callbackName = `flickrCallback_${timestamp}`;
                     
-                    console.log('📞 Creating callback:', callbackName);
-                    
                     // Create global callback function
                     window[callbackName] = (data) => {
-                        console.log('📦 Flickr API response received:', data);
+                        console.log('📡 Flickr API response received:', data);
                         
                         // Debug: Check if we're getting tags in the response
                         if (data.stat === 'ok' && data.photoset && data.photoset.photo) {
-                            console.log('📊 Number of photos:', data.photoset.photo.length);
-                            console.log('📷 Sample photo data:', data.photoset.photo[0]);
-                            console.log('🏷️ Tags in first photo:', data.photoset.photo[0].tags);
+                            console.log('✅ API call successful!');
+                            console.log(`📸 Found ${data.photoset.photo.length} photos`);
+                            console.log('📋 Album title:', data.photoset.title);
+                            console.log('🏷️ Sample photo data:', data.photoset.photo[0]);
+                            if (data.photoset.photo[0]) {
+                                console.log('🏷️ Tags in first photo:', data.photoset.photo[0].tags);
+                            }
                         } else {
-                            console.error('❌ API Response Error:', data);
+                            console.error('❌ API returned error status:', data);
                         }
                         
                         // Clean up
                         delete window[callbackName];
-                        document.head.removeChild(script);
+                        if (script.parentNode) {
+                            document.head.removeChild(script);
+                        }
                         
                         if (data.stat === 'ok') {
                             resolve(data.photoset.photo);
                         } else {
-                            reject(new Error('Flickr API error: ' + data.message));
+                            reject(new Error(`Flickr API error: ${data.message} (Code: ${data.code})`));
                         }
                     };
                     
@@ -1071,27 +794,29 @@
                     // Debug: Log the API URL being called
                     console.log('🔗 Flickr API URL:', script.src);
                     
-                    script.onerror = (error) => {
-                        console.error('❌ Script loading error:', error);
+                    script.onerror = (e) => {
+                        console.error('❌ Script loading error:', e);
                         delete window[callbackName];
-                        document.head.removeChild(script);
-                        reject(new Error('Failed to load Flickr API script'));
+                        if (script.parentNode) {
+                            document.head.removeChild(script);
+                        }
+                        reject(new Error('Failed to load Flickr API script - check network connection'));
                     };
                     
-                    console.log('📡 Adding script to page...');
+                    console.log('📤 Adding script to DOM...');
                     document.head.appendChild(script);
                     
-                    // Set timeout for API call
+                    // Set timeout for API call (increased to 15 seconds)
                     setTimeout(() => {
                         if (window[callbackName]) {
-                            console.error('⏰ API call timeout');
+                            console.error('⏰ Flickr API request timed out after 15 seconds');
                             delete window[callbackName];
                             if (script.parentNode) {
                                 document.head.removeChild(script);
                             }
-                            reject(new Error('Flickr API request timeout'));
+                            reject(new Error('Flickr API request timeout - check API credentials and network'));
                         }
-                    }, 10000);
+                    }, 15000);
                 });
             }
 
@@ -1216,11 +941,8 @@
                     
                     const allFilter = document.querySelector('.filter-tag[data-tag="all"]');
                     if (allFilter) allFilter.classList.add('active');
-                    this.activeTags.clear();
                 } else {
                     // Filter by tag and shuffle within category
-                    this.activeTags.clear();
-                    this.activeTags.add(tag);
                     this.filteredPhotos = this.photos.filter(photo => {
                         const hasTag = photo.tags.includes(tag);
                         console.log(`Photo "${photo.title}" has tag "${tag}":`, hasTag, 'Tags:', photo.tags);
@@ -1244,171 +966,87 @@
                 console.log('Rendering gallery with', this.filteredPhotos.length, 'photos');
                 const gallery = document.getElementById('gallery');
                 
-                // 🎭 Enhanced exit animations with accessibility considerations
+                // Modern exit animation - staggered fade out
                 const currentPhotos = gallery.querySelectorAll('.photo-item');
-                if (!this.prefersReducedMotion) {
-                    currentPhotos.forEach((photo, index) => {
-                        setTimeout(() => {
-                            photo.classList.add('fade-out');
-                        }, index * 50); // Stagger the exit animations
-                    });
-                }
+                currentPhotos.forEach((photo, index) => {
+                    setTimeout(() => {
+                        photo.classList.add('fade-out');
+                    }, index * 50); // Stagger the exit animations
+                });
                 
                 // Wait for exit animations to complete
-                const animationDelay = this.prefersReducedMotion ? 0 : 400;
                 setTimeout(() => {
                     gallery.innerHTML = '';
                     
-                    // 🔄 Show loading skeletons while images load
-                    this.showLoadingSkeletons(gallery);
-                    
-                    // 🖼️ Enhanced image rendering with lazy loading and accessibility
+                    // Modern entrance animations - variety of effects
                     this.filteredPhotos.forEach((photo, index) => {
-                        this.createPhotoElement(photo, index, gallery);
+                        const photoElement = document.createElement('div');
+                        photoElement.className = 'photo-item';
+                        
+                        const img = document.createElement('img');
+                        img.src = photo.url_m;
+                        img.alt = photo.title;
+                        img.loading = 'lazy';
+                        
+                        photoElement.appendChild(img);
+                        photoElement.addEventListener('click', () => this.openLightbox(photo));
+                        
+                        gallery.appendChild(photoElement);
+                        
+                        // Staggered entrance with clean fade animation
+                        setTimeout(() => {
+                            photoElement.classList.add('fade-in');
+                            
+                            // Add interaction enhancements after animation completes
+                            setTimeout(() => {
+                                if (this.isMobile) {
+                                    // Mobile: Touch-based interactions with scroll protection
+                                    photoElement.style.transition = 'transform 0.2s ease';
+                                    
+                                    let touchStartTime = 0;
+                                    let touchStartY = 0;
+                                    let hasMoved = false;
+                                    
+                                    photoElement.addEventListener('touchstart', (e) => {
+                                        touchStartTime = Date.now();
+                                        touchStartY = e.touches[0].clientY;
+                                        hasMoved = false;
+                                        photoElement.style.transform = 'scale(0.95)';
+                                    });
+                                    
+                                    photoElement.addEventListener('touchmove', (e) => {
+                                        const touchY = e.touches[0].clientY;
+                                        const moveDistance = Math.abs(touchY - touchStartY);
+                                        if (moveDistance > 10) { // 10px threshold
+                                            hasMoved = true;
+                                            photoElement.style.transform = 'scale(1)'; // Reset scale if scrolling
+                                        }
+                                    });
+                                    
+                                    photoElement.addEventListener('touchend', (e) => {
+                                        const touchDuration = Date.now() - touchStartTime;
+                                        photoElement.style.transform = 'scale(1)';
+                                        
+                                        // Only open lightbox if it was a quick tap without movement
+                                        if (!hasMoved && touchDuration < 300) {
+                                            e.preventDefault(); // Prevent any other actions
+                                            setTimeout(() => this.openLightbox(photo), 50);
+                                        }
+                                    });
+                                } else {
+                                    // Desktop: Nordic precision hover
+                                    photoElement.style.transition = 'all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)';
+                                    // Hover effects are handled by CSS for consistency
+                                }
+                            }, this.isMobile ? 400 : 600);
+                        }, this.isMobile ? index * 20 : index * 30); // ❄️ Precise Nordic timing
                     });
                     
                     console.log('Gallery rendered with', gallery.children.length, 'elements');
-                }, animationDelay);
+                }, 400); // Wait for all exit animations
             }
 
-            // 🔄 SHOW LOADING SKELETONS
-            showLoadingSkeletons(gallery) {
-                // Create skeleton placeholders
-                const skeletonCount = Math.min(this.filteredPhotos.length, 12); // Max 12 skeletons
-                for (let i = 0; i < skeletonCount; i++) {
-                    const skeleton = document.createElement('div');
-                    skeleton.className = 'photo-item photo-skeleton skeleton';
-                    skeleton.setAttribute('aria-hidden', 'true');
-                    gallery.appendChild(skeleton);
-                }
-            }
-
-            // 🖼️ CREATE ENHANCED PHOTO ELEMENT
-            createPhotoElement(photo, index, gallery) {
-                const photoElement = document.createElement('div');
-                photoElement.className = 'photo-item loading';
-                photoElement.setAttribute('role', 'button');
-                photoElement.setAttribute('tabindex', '0');
-                photoElement.setAttribute('aria-label', `View photo: ${photo.title}`);
-                
-                // 🖼️ Enhanced image with lazy loading and error handling
-                const img = document.createElement('img');
-                
-                // Use responsive image sizes based on device
-                const imageUrl = this.getOptimalImageUrl(photo);
-                
-                img.src = imageUrl;
-                img.alt = photo.title || 'Photo from Flickr album';
-                img.loading = 'lazy';
-                img.decoding = 'async';
-                
-                // 🔄 Handle image loading states
-                img.addEventListener('load', () => {
-                    photoElement.classList.remove('loading');
-                    img.classList.add('loaded');
-                    
-                    // Remove skeleton placeholder
-                    const skeleton = gallery.querySelector('.photo-skeleton');
-                    if (skeleton) skeleton.remove();
-                });
-                
-                img.addEventListener('error', () => {
-                    console.warn('Failed to load image:', photo.title);
-                    photoElement.classList.remove('loading');
-                    photoElement.classList.add('error');
-                    photoElement.setAttribute('aria-label', `Failed to load photo: ${photo.title}`);
-                });
-                
-                photoElement.appendChild(img);
-                
-                // 🎯 Enhanced interaction handling
-                this.setupPhotoInteractions(photoElement, photo, index);
-                
-                gallery.appendChild(photoElement);
-                
-                // 🎭 Staggered entrance animations (accessibility-aware)
-                if (!this.prefersReducedMotion) {
-                    setTimeout(() => {
-                        photoElement.classList.add('fade-in');
-                    }, index * 30);
-                }
-            }
-
-            // 🖼️ GET OPTIMAL IMAGE URL
-            getOptimalImageUrl(photo) {
-                // For now, just use the medium URL that we know exists
-                return photo.url_m || photo.url_l;
-            }
-
-            // 🎯 SETUP PHOTO INTERACTIONS
-            setupPhotoInteractions(photoElement, photo, index) {
-                // Click handler
-                const openPhoto = () => {
-                    this.openLightbox(photo, index);
-                };
-                
-                photoElement.addEventListener('click', openPhoto);
-                
-                // Enhanced mobile touch interactions
-                if (this.isMobile) {
-                    this.setupMobileTouchInteractions(photoElement, openPhoto);
-                }
-            }
-
-            // 📱 MOBILE TOUCH INTERACTIONS
-            setupMobileTouchInteractions(photoElement, openPhoto) {
-                let touchStartTime = 0;
-                let touchStartY = 0;
-                let touchStartX = 0;
-                let hasMoved = false;
-                
-                photoElement.addEventListener('touchstart', (e) => {
-                    touchStartTime = Date.now();
-                    touchStartY = e.touches[0].clientY;
-                    touchStartX = e.touches[0].clientX;
-                    hasMoved = false;
-                    
-                    if (!this.prefersReducedMotion) {
-                        photoElement.style.transform = 'scale(0.95)';
-                    }
-                }, { passive: true });
-                
-                photoElement.addEventListener('touchmove', (e) => {
-                    const touchY = e.touches[0].clientY;
-                    const touchX = e.touches[0].clientX;
-                    const moveDistanceY = Math.abs(touchY - touchStartY);
-                    const moveDistanceX = Math.abs(touchX - touchStartX);
-                    
-                    if (moveDistanceY > 10 || moveDistanceX > 10) {
-                        hasMoved = true;
-                        if (!this.prefersReducedMotion) {
-                            photoElement.style.transform = 'scale(1)';
-                        }
-                    }
-                }, { passive: true });
-                
-                photoElement.addEventListener('touchend', (e) => {
-                    const touchDuration = Date.now() - touchStartTime;
-                    
-                    if (!this.prefersReducedMotion) {
-                        photoElement.style.transform = 'scale(1)';
-                    }
-                    
-                    // Only open lightbox if it was a quick tap without movement
-                    if (!hasMoved && touchDuration < 300) {
-                        e.preventDefault();
-                        
-                        // Add haptic feedback if supported
-                        if (navigator.vibrate) {
-                            navigator.vibrate(50);
-                        }
-                        
-                        setTimeout(openPhoto, 50);
-                    }
-                }, { passive: false });
-            }
-
-            openLightbox(photo, index = -1) {
+            openLightbox(photo) {
                 const lightbox = document.getElementById('lightbox');
                 const lightboxContent = lightbox.querySelector('.lightbox-content');
                 const lightboxImg = document.getElementById('lightboxImg');
@@ -1573,7 +1211,25 @@
 
             showError() {
                 document.getElementById('loading').style.display = 'none';
-                document.getElementById('error').style.display = 'block';
+                const errorDiv = document.getElementById('error');
+                errorDiv.style.display = 'block';
+                
+                // Add more detailed error message
+                errorDiv.innerHTML = `
+                    <h3>❌ Failed to load photos</h3>
+                    <p><strong>Possible issues:</strong></p>
+                    <ul>
+                        <li>Flickr API key may be expired or invalid</li>
+                        <li>Album ID "${this.albumId}" may be incorrect or private</li>
+                        <li>User ID "${this.userId}" may be incorrect</li>
+                        <li>Network connection issues</li>
+                    </ul>
+                    <p><strong>Current Configuration:</strong></p>
+                    <p>API Key: ${this.apiKey}</p>
+                    <p>Album ID: ${this.albumId}</p>
+                    <p>User ID: ${this.userId}</p>
+                    <p>Check browser console for more details.</p>
+                `;
             }
         }
 
