@@ -150,26 +150,20 @@
         /* Mobile small: 320px - 480px */
         /* Mobile tiny: < 320px */
 
-        /* 📋 FILTER SECTION - ROBUST STICKY */
+        /* 📋 FILTER SECTION - SIMPLIFIED STICKY */
         .filter-container {
             position: sticky;        /* 📌 Stick to top when scrolling */
             position: -webkit-sticky; /* 🍎 Safari fallback */
             top: 0;                  /* 📏 Stick to very top */
-            left: 0;                 /* 📏 Ensure proper positioning */
-            right: 0;                /* 📏 Full width */
             z-index: var(--z-sticky); /* 📏 Above photos but below lightbox */
-            background: linear-gradient(180deg, 
-                        rgba(255,255,255,0.95) 0%, 
-                        rgba(255,255,255,0.9) 80%, 
-                        rgba(255,255,255,0.7) 100%); /* 🎨 Subtle gradient background */
+            background: rgba(255,255,255,0.95); /* 🎨 Simple background */
             backdrop-filter: blur(10px); /* 🎪 Modern blur effect */
             -webkit-backdrop-filter: blur(10px); /* 🍎 Safari support */
-            padding: var(--spacing-lg) 0; /* 📦 Padding around filters */
-            margin-bottom: var(--spacing-xl); /* 📏 Space below filters */
+            padding: 15px 0; /* 📦 Fixed padding around filters */
+            margin-bottom: 20px; /* 📏 Fixed space below filters */
             text-align: center;      /* Center filter elements */
             border-bottom: 1px solid var(--border-color); /* 📏 Subtle bottom border */
             transition: all var(--transition-normal); /* 🎭 Smooth transitions */
-            /* Ensure sticky behavior works */
             width: 100%;
             box-sizing: border-box;
         }
@@ -177,26 +171,7 @@
         /* 🌙 Dark mode filter container */
         @media (prefers-color-scheme: dark) {
             .filter-container {
-                background: linear-gradient(180deg, 
-                            rgba(26,26,26,0.95) 0%, 
-                            rgba(26,26,26,0.9) 80%, 
-                            rgba(26,26,26,0.7) 100%);
-            }
-        }
-
-        /* 📱 FORCE MOBILE STICKY BEHAVIOR */
-        @media screen and (max-width: 768px) {
-            .filter-container {
-                position: -webkit-sticky !important;
-                position: sticky !important;
-                top: 0 !important;
-                left: 0 !important;
-                right: 0 !important;
-                z-index: 1000 !important;
-                width: 100% !important;
-                /* Additional mobile-specific fixes */
-                transform: translateZ(0); /* Force hardware acceleration */
-                will-change: transform;   /* Optimize for position changes */
+                background: rgba(26,26,26,0.95); /* 🎨 Simple dark background */
             }
         }
 
@@ -1012,52 +987,11 @@
             setupStickyFilters() {
                 const filterContainer = document.querySelector('.filter-container');
                 let isScrolled = false;
-                let isMobile = window.innerWidth <= 768;
                 
-                // Enhanced sticky monitoring with mobile-first approach
-                const checkStickyBehavior = () => {
+                // Simple scroll detection for visual effects only
+                const checkScrolled = () => {
                     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                    const rect = filterContainer.getBoundingClientRect();
                     
-                    // More aggressive mobile sticky enforcement
-                    if (isMobile) {
-                        // On mobile, always force fixed positioning when scrolled
-                        if (scrollTop > 50) {
-                            if (filterContainer.style.position !== 'fixed') {
-                                console.log('Mobile: Forcing fixed navigation');
-                                filterContainer.style.position = 'fixed';
-                                filterContainer.style.top = '0';
-                                filterContainer.style.left = '0';
-                                filterContainer.style.right = '0';
-                                filterContainer.style.width = '100%';
-                                filterContainer.style.zIndex = '1000';
-                                filterContainer.style.boxSizing = 'border-box';
-                            }
-                        } else if (scrollTop <= 50) {
-                            // Only restore sticky when very close to top
-                            filterContainer.style.position = 'sticky';
-                            filterContainer.style.left = '';
-                            filterContainer.style.right = '';
-                        }
-                    } else {
-                        // Desktop behavior - check if filter should be at top but isn't
-                        if (scrollTop > 100 && rect.top > 10) {
-                            console.log('Desktop: Sticky nav unstuck - forcing position');
-                            filterContainer.style.position = 'fixed';
-                            filterContainer.style.top = '0';
-                            filterContainer.style.left = '0';
-                            filterContainer.style.right = '0';
-                            filterContainer.style.width = '100%';
-                            filterContainer.style.zIndex = '1000';
-                        } else if (scrollTop <= 100 && filterContainer.style.position === 'fixed') {
-                            // Restore normal sticky when back at top
-                            filterContainer.style.position = 'sticky';
-                            filterContainer.style.left = '';
-                            filterContainer.style.right = '';
-                        }
-                    }
-                    
-                    // Original scrolled class logic
                     if (scrollTop > 20 && !isScrolled) {
                         filterContainer.classList.add('scrolled');
                         isScrolled = true;
@@ -1067,23 +1001,8 @@
                     }
                 };
                 
-                // Monitor scroll with throttling for performance
-                let ticking = false;
-                window.addEventListener('scroll', () => {
-                    if (!ticking) {
-                        requestAnimationFrame(() => {
-                            checkStickyBehavior();
-                            ticking = false;
-                        });
-                        ticking = true;
-                    }
-                });
-                
-                // Update mobile detection on resize
-                window.addEventListener('resize', () => {
-                    isMobile = window.innerWidth <= 768;
-                    checkStickyBehavior();
-                });
+                // Simple scroll listener - no position manipulation
+                window.addEventListener('scroll', checkScrolled);
             }
 
             setupEventListeners() {
