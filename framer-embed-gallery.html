@@ -935,7 +935,12 @@
             }
 
             init() {
-                this.isMobile = window.innerWidth <= 480;
+                console.log('🚀 Initializing Flickr Gallery...');
+                console.log('📱 Mobile device:', this.isMobile = window.innerWidth <= 480);
+                console.log('🔑 API Key:', this.apiKey ? 'Present' : 'Missing');
+                console.log('📁 Album ID:', this.albumId);
+                console.log('👤 User ID:', this.userId);
+                
                 this.setupEventListeners();
                 this.setupBackToTopButton();
                 this.setupStickyFilters();
@@ -1095,30 +1100,38 @@
             }
 
             async loadPhotos() {
+                console.log('🔄 Starting to load photos...');
                 try {
                     const photos = await this.fetchFlickrPhotos();
+                    console.log('✅ Photos fetched successfully:', photos.length);
                     this.processPhotos(photos);
                 } catch (error) {
-                    console.error('Error loading Flickr photos:', error);
+                    console.error('❌ Error loading Flickr photos:', error);
                     this.showError();
                 }
             }
 
             // Flickr API call using JSONP to avoid CORS issues
             async fetchFlickrPhotos() {
+                console.log('🌐 Fetching from Flickr API...');
                 return new Promise((resolve, reject) => {
                     // Add timestamp to prevent caching issues
                     const timestamp = Date.now();
                     const callbackName = `flickrCallback_${timestamp}`;
                     
+                    console.log('📞 Creating callback:', callbackName);
+                    
                     // Create global callback function
                     window[callbackName] = (data) => {
-                        console.log('Flickr API response:', data);
+                        console.log('📦 Flickr API response received:', data);
                         
                         // Debug: Check if we're getting tags in the response
                         if (data.stat === 'ok' && data.photoset && data.photoset.photo) {
-                            console.log('Sample photo data:', data.photoset.photo[0]);
-                            console.log('Tags in first photo:', data.photoset.photo[0].tags);
+                            console.log('📊 Number of photos:', data.photoset.photo.length);
+                            console.log('📷 Sample photo data:', data.photoset.photo[0]);
+                            console.log('🏷️ Tags in first photo:', data.photoset.photo[0].tags);
+                        } else {
+                            console.error('❌ API Response Error:', data);
                         }
                         
                         // Clean up
@@ -1137,19 +1150,22 @@
                     script.src = `https://www.flickr.com/services/rest/?method=flickr.photosets.getPhotos&api_key=${this.apiKey}&photoset_id=${this.albumId}&user_id=${this.userId}&extras=tags,url_m,url_l&format=json&jsoncallback=${callbackName}&_=${timestamp}`;
                     
                     // Debug: Log the API URL being called
-                    console.log('Flickr API URL:', script.src);
+                    console.log('🔗 Flickr API URL:', script.src);
                     
-                    script.onerror = () => {
+                    script.onerror = (error) => {
+                        console.error('❌ Script loading error:', error);
                         delete window[callbackName];
                         document.head.removeChild(script);
                         reject(new Error('Failed to load Flickr API script'));
                     };
                     
+                    console.log('📡 Adding script to page...');
                     document.head.appendChild(script);
                     
                     // Set timeout for API call
                     setTimeout(() => {
                         if (window[callbackName]) {
+                            console.error('⏰ API call timeout');
                             delete window[callbackName];
                             if (script.parentNode) {
                                 document.head.removeChild(script);
@@ -1401,20 +1417,8 @@
 
             // 🖼️ GET OPTIMAL IMAGE URL
             getOptimalImageUrl(photo) {
-                const devicePixelRatio = window.devicePixelRatio || 1;
-                const screenWidth = window.innerWidth;
-                
-                // Choose image size based on screen width and pixel density
-                if (screenWidth <= 480) {
-                    // Mobile: use small images
-                    return devicePixelRatio > 1 ? photo.url_m : photo.url_s;
-                } else if (screenWidth <= 768) {
-                    // Tablet: use medium images
-                    return devicePixelRatio > 1 ? photo.url_c : photo.url_m;
-                } else {
-                    // Desktop: use larger images
-                    return devicePixelRatio > 1 ? photo.url_h : photo.url_c;
-                }
+                // For now, just use the medium URL that we know exists
+                return photo.url_m || photo.url_l;
             }
 
             // 🎯 SETUP PHOTO INTERACTIONS
