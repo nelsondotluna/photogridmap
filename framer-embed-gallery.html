@@ -74,6 +74,22 @@
             box-sizing: border-box;
         }
 
+        /* 📱 FORCE MOBILE STICKY BEHAVIOR */
+        @media screen and (max-width: 768px) {
+            .filter-container {
+                position: -webkit-sticky !important;
+                position: sticky !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                z-index: 1000 !important;
+                width: 100% !important;
+                /* Additional mobile-specific fixes */
+                transform: translateZ(0); /* Force hardware acceleration */
+                will-change: transform;   /* Optimize for position changes */
+            }
+        }
+
         /*  Enhanced sticky state */
         .filter-container.scrolled {
             background: rgba(255,255,255,0.98); /* 🎨 More opaque when scrolled */
@@ -624,25 +640,49 @@
             setupStickyFilters() {
                 const filterContainer = document.querySelector('.filter-container');
                 let isScrolled = false;
+                let isMobile = window.innerWidth <= 768;
                 
-                // Enhanced sticky monitoring
+                // Enhanced sticky monitoring with mobile-first approach
                 const checkStickyBehavior = () => {
                     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
                     const rect = filterContainer.getBoundingClientRect();
                     
-                    // Check if filter should be at top but isn't (sticky failed)
-                    if (scrollTop > 100 && rect.top > 10) {
-                        console.log('Sticky nav unstuck - forcing position');
-                        // Force sticky behavior with fallback positioning
-                        filterContainer.style.position = 'fixed';
-                        filterContainer.style.top = '0';
-                        filterContainer.style.width = '100%';
-                        filterContainer.style.zIndex = '100';
-                    } else if (scrollTop <= 100 && filterContainer.style.position === 'fixed') {
-                        // Restore normal sticky when back at top
-                        filterContainer.style.position = 'sticky';
-                        filterContainer.style.top = '0';
-                        filterContainer.style.width = '100%';
+                    // More aggressive mobile sticky enforcement
+                    if (isMobile) {
+                        // On mobile, always force fixed positioning when scrolled
+                        if (scrollTop > 50) {
+                            if (filterContainer.style.position !== 'fixed') {
+                                console.log('Mobile: Forcing fixed navigation');
+                                filterContainer.style.position = 'fixed';
+                                filterContainer.style.top = '0';
+                                filterContainer.style.left = '0';
+                                filterContainer.style.right = '0';
+                                filterContainer.style.width = '100%';
+                                filterContainer.style.zIndex = '1000';
+                                filterContainer.style.boxSizing = 'border-box';
+                            }
+                        } else if (scrollTop <= 50) {
+                            // Only restore sticky when very close to top
+                            filterContainer.style.position = 'sticky';
+                            filterContainer.style.left = '';
+                            filterContainer.style.right = '';
+                        }
+                    } else {
+                        // Desktop behavior - check if filter should be at top but isn't
+                        if (scrollTop > 100 && rect.top > 10) {
+                            console.log('Desktop: Sticky nav unstuck - forcing position');
+                            filterContainer.style.position = 'fixed';
+                            filterContainer.style.top = '0';
+                            filterContainer.style.left = '0';
+                            filterContainer.style.right = '0';
+                            filterContainer.style.width = '100%';
+                            filterContainer.style.zIndex = '1000';
+                        } else if (scrollTop <= 100 && filterContainer.style.position === 'fixed') {
+                            // Restore normal sticky when back at top
+                            filterContainer.style.position = 'sticky';
+                            filterContainer.style.left = '';
+                            filterContainer.style.right = '';
+                        }
                     }
                     
                     // Original scrolled class logic
@@ -667,8 +707,11 @@
                     }
                 });
                 
-                // Also check on window resize
-                window.addEventListener('resize', checkStickyBehavior);
+                // Update mobile detection on resize
+                window.addEventListener('resize', () => {
+                    isMobile = window.innerWidth <= 768;
+                    checkStickyBehavior();
+                });
             }
 
             setupEventListeners() {
