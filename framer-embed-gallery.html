@@ -39,6 +39,97 @@
             box-sizing: border-box;
         }
 
+        /* 🎨 CSS CUSTOM PROPERTIES FOR THEMING */
+        :root {
+            /* Color Palette */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-muted: #999999;
+            --accent-color: #007AFF;
+            --accent-hover: #0056cc;
+            --border-color: rgba(0,0,0,0.1);
+            --shadow-light: rgba(0,0,0,0.05);
+            --shadow-medium: rgba(0,0,0,0.15);
+            --shadow-heavy: rgba(0,0,0,0.25);
+            
+            /* Spacing */
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 12px;
+            --spacing-lg: 16px;
+            --spacing-xl: 24px;
+            --spacing-xxl: 32px;
+            
+            /* Border Radius */
+            --radius-sm: 2px;
+            --radius-md: 4px;
+            --radius-lg: 8px;
+            --radius-xl: 12px;
+            --radius-full: 50%;
+            
+            /* Typography */
+            --font-size-sm: 0.875rem;
+            --font-size-md: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            
+            /* Transitions */
+            --transition-fast: 0.15s ease;
+            --transition-normal: 0.3s ease;
+            --transition-slow: 0.5s ease;
+            --transition-bounce: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            
+            /* Z-index layers */
+            --z-base: 1;
+            --z-sticky: 100;
+            --z-modal: 1000;
+            --z-tooltip: 1100;
+        }
+
+        /* 🌙 DARK MODE THEME */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-primary: #1a1a1a;
+                --bg-secondary: #2d2d2d;
+                --text-primary: #ffffff;
+                --text-secondary: #cccccc;
+                --text-muted: #888888;
+                --border-color: rgba(255,255,255,0.1);
+                --shadow-light: rgba(0,0,0,0.3);
+                --shadow-medium: rgba(0,0,0,0.5);
+                --shadow-heavy: rgba(0,0,0,0.7);
+            }
+        }
+
+        /* 🔄 LOADING SKELETON ANIMATIONS */
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, 
+                var(--bg-secondary) 25%, 
+                rgba(255,255,255,0.1) 50%, 
+                var(--bg-secondary) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: var(--radius-sm);
+        }
+
+        .photo-skeleton {
+            aspect-ratio: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
         /* 🖼️ MAIN CONTAINER - Framer optimized */
         .gallery-container {
             width: 100%;              /* 📏 Full width to fit Framer container */
@@ -46,9 +137,18 @@
             margin: 0;                /* No auto margins for embed */
             padding: 0;               /* 📦 No padding - let Framer control spacing */
             font-family: inherit;     /* 📝 Inherit Framer's font */
-            color: inherit;           /* 🎨 Inherit Framer's text color */
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
             position: relative;       /* 📍 Establish positioning context */
+            transition: background-color var(--transition-normal), color var(--transition-normal);
         }
+
+        /* 📱 ENHANCED RESPONSIVE BREAKPOINTS */
+        /* Tablet landscape: 1024px - 1200px */
+        /* Tablet portrait: 768px - 1024px */  
+        /* Mobile large: 480px - 768px */
+        /* Mobile small: 320px - 480px */
+        /* Mobile tiny: < 320px */
 
         /* 📋 FILTER SECTION - ROBUST STICKY */
         .filter-container {
@@ -57,21 +157,31 @@
             top: 0;                  /* 📏 Stick to very top */
             left: 0;                 /* 📏 Ensure proper positioning */
             right: 0;                /* 📏 Full width */
-            z-index: 100;            /* 📏 Above photos but below lightbox */
+            z-index: var(--z-sticky); /* 📏 Above photos but below lightbox */
             background: linear-gradient(180deg, 
                         rgba(255,255,255,0.95) 0%, 
                         rgba(255,255,255,0.9) 80%, 
                         rgba(255,255,255,0.7) 100%); /* 🎨 Subtle gradient background */
             backdrop-filter: blur(10px); /* 🎪 Modern blur effect */
             -webkit-backdrop-filter: blur(10px); /* 🍎 Safari support */
-            padding: 15px 0;         /* 📦 Padding around filters */
-            margin-bottom: 20px;     /* 📏 Space below filters */
+            padding: var(--spacing-lg) 0; /* 📦 Padding around filters */
+            margin-bottom: var(--spacing-xl); /* 📏 Space below filters */
             text-align: center;      /* Center filter elements */
-            border-bottom: 1px solid rgba(0,0,0,0.1); /* 📏 Subtle bottom border */
-            transition: all 0.3s ease; /* 🎭 Smooth transitions */
+            border-bottom: 1px solid var(--border-color); /* 📏 Subtle bottom border */
+            transition: all var(--transition-normal); /* 🎭 Smooth transitions */
             /* Ensure sticky behavior works */
             width: 100%;
             box-sizing: border-box;
+        }
+
+        /* 🌙 Dark mode filter container */
+        @media (prefers-color-scheme: dark) {
+            .filter-container {
+                background: linear-gradient(180deg, 
+                            rgba(26,26,26,0.95) 0%, 
+                            rgba(26,26,26,0.9) 80%, 
+                            rgba(26,26,26,0.7) 100%);
+            }
         }
 
         /* 📱 FORCE MOBILE STICKY BEHAVIOR */
@@ -103,42 +213,226 @@
             gap: 10px;              /* 📏 Space between filter items */
         }
 
-        /* 🏷️ FILTER TAGS - Text style for Framer */
+        /* 🏷️ FILTER TAGS - Enhanced for touch devices */
         .filter-tag {
             background: none;        /* No background - just text */
             border: none;           /* No border */
-            padding: 8px 12px;      /* 📦 Padding around text */
+            padding: var(--spacing-md) var(--spacing-lg); /* 📦 Better touch targets */
+            min-height: 44px;       /* � Minimum touch target size */
+            min-width: 44px;        /* 📱 Minimum touch target size */
             cursor: pointer;
-            font-size: inherit;     /* 📝 Inherit Framer font size */
-            color: inherit;         /* 🎨 Inherit Framer text color */
+            font-size: var(--font-size-md); /* 📝 Consistent font size */
+            color: var(--text-secondary); /* 🎨 Use theme color */
             text-decoration: none;
-            transition: opacity 0.2s ease;
+            transition: all var(--transition-fast);
             font-family: inherit;
+            border-radius: var(--radius-md);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            user-select: none;      /* Prevent text selection */
+            -webkit-tap-highlight-color: transparent; /* Remove tap highlight */
         }
 
-        .filter-tag:hover {
-            opacity: 0.7;           /* 🎨 Subtle hover effect */
+        .filter-tag:hover,
+        .filter-tag:focus {
+            color: var(--accent-color);
+            background-color: var(--shadow-light);
+            transform: translateY(-1px);
         }
 
         .filter-tag.active {
-            color: #007AFF;         /* 🎨 Active filter color - change to match your brand */
-            font-weight: bold;      /* Make active filters bold */
+            color: var(--accent-color); /* 🎨 Active filter color */
+            font-weight: 600;        /* Make active filters semi-bold */
+            background-color: var(--shadow-light);
+            box-shadow: 0 2px 8px var(--shadow-medium);
+        }
+
+        .filter-tag:active {
+            transform: translateY(0px); /* Quick feedback on tap */
+        }
+
+        /* 🔍 SEARCH INPUT STYLING */
+        .search-container {
+            margin-bottom: var(--spacing-lg);
+            position: relative;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: var(--spacing-md) var(--spacing-lg);
+            padding-left: 40px; /* Space for search icon */
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            font-size: var(--font-size-md);
+            font-family: inherit;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all var(--transition-fast);
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: var(--spacing-md);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: var(--font-size-lg);
+            pointer-events: none;
+        }
+
+        .clear-search {
+            position: absolute;
+            right: var(--spacing-md);
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: var(--font-size-lg);
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+            padding: var(--spacing-xs);
+            border-radius: var(--radius-full);
+        }
+
+        .search-input:not(:placeholder-shown) + .search-icon + .clear-search {
+            opacity: 1;
+        }
+
+        .clear-search:hover {
+            color: var(--text-primary);
+            background-color: var(--shadow-light);
+        }
+
+        /* ⬆️ BACK TO TOP BUTTON */
+        .back-to-top {
+            position: fixed;
+            bottom: var(--spacing-xl);
+            right: var(--spacing-xl);
+            width: 56px;
+            height: 56px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            font-size: var(--font-size-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px var(--shadow-medium);
+            transition: all var(--transition-normal);
+            z-index: var(--z-sticky);
+            transform: translateY(100px);
+            opacity: 0;
+            user-select: none;
+        }
+
+        .back-to-top.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .back-to-top:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--shadow-heavy);
+        }
+
+        .back-to-top:active {
+            transform: translateY(0);
+        }
+
+        /* 📱 Mobile adjustments for back to top */
+        @media (max-width: 768px) {
+            .back-to-top {
+                bottom: var(--spacing-lg);
+                right: var(--spacing-lg);
+                width: 48px;
+                height: 48px;
+                font-size: var(--font-size-lg);
+            }
         }
 
         /* ➖ FILTER SEPARATORS */
         .filter-separator {
-            color: inherit;         /* 🎨 Match text color */
-            font-weight: bold;
-            padding: 8px 4px;
-            font-size: inherit;
+            color: var(--text-secondary); /* 🎨 Use theme color */
+            font-weight: 600;
+            padding: var(--spacing-sm) var(--spacing-xs);
+            font-size: var(--font-size-md);
         }
 
-        /* 🖼️ PHOTO GRID */
+        /* 🖼️ RESPONSIVE PHOTO GRID */
         .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);  /* 📐 4 columns desktop - change number for different layout */
-            gap: 4px;                               /* 📏 Gap between photos - adjust spacing */
+            gap: var(--spacing-xs); /* 📏 Consistent gap using CSS custom properties */
             width: 100%;
+            /* Desktop: 5 columns for wider screens */
+            grid-template-columns: repeat(5, 1fr);
+        }
+
+        /* � ENHANCED RESPONSIVE BREAKPOINTS */
+        
+        /* Large Desktop: 1400px+ = 6 columns */
+        @media (min-width: 1400px) {
+            .gallery-grid {
+                grid-template-columns: repeat(6, 1fr);
+                gap: var(--spacing-sm);
+            }
+        }
+
+        /* Desktop: 1200px - 1400px = 5 columns */
+        @media (max-width: 1399px) and (min-width: 1200px) {
+            .gallery-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        /* Tablet Landscape: 1024px - 1199px = 4 columns */
+        @media (max-width: 1199px) and (min-width: 1024px) {
+            .gallery-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* Tablet Portrait: 768px - 1023px = 3 columns */
+        @media (max-width: 1023px) and (min-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: var(--spacing-sm);
+            }
+        }
+
+        /* Mobile Large: 480px - 767px = 2 columns */
+        @media (max-width: 767px) and (min-width: 480px) {
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--spacing-xs);
+            }
+        }
+
+        /* Mobile Small: < 480px = 2 columns with smaller gap */
+        @media (max-width: 479px) {
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2px;
+            }
         }
 
         .photo-item {
@@ -146,22 +440,69 @@
             aspect-ratio: 1;        /* 📐 Square photos - change to 4/3 or 16/9 for rectangles */
             overflow: hidden;
             cursor: pointer;
-            border-radius: 2px;     /* 🎨 Sharp, minimal corners */
-            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-            border: 1px solid rgba(0,0,0,0.05); /* ❄️ Subtle Nordic border */
+            border-radius: var(--radius-sm); /* 🎨 Use CSS custom property */
+            transition: all var(--transition-bounce); /* 🎪 Bouncy easing */
+            border: 1px solid var(--border-color); /* ❄️ Use theme border color */
+            background-color: var(--bg-secondary);
+            /* Performance optimizations */
+            transform: translateZ(0); /* Force hardware acceleration */
+            will-change: transform;   /* Optimize for transform changes */
         }
 
         .photo-item:hover {
-            transform: translateY(-1px); /* ❄️ Minimal lift - no scaling */
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* ❄️ Clean shadow */
-            border-color: rgba(0,0,0,0.1);
+            transform: translateY(-2px) scale(1.02); /* 🎪 Enhanced lift and slight scale */
+            box-shadow: 0 8px 25px var(--shadow-medium); /* 🌟 Beautiful shadow */
+            border-color: var(--border-color);
+        }
+
+        .photo-item:active {
+            transform: translateY(0px) scale(0.98); /* Quick feedback on click */
         }
 
         .photo-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;      /* 📐 How image fills container */
-            transition: opacity 0.3s ease;
+            transition: all var(--transition-normal);
+            /* Lazy loading states */
+            opacity: 0;
+            transform: scale(1.1);
+        }
+
+        .photo-item img.loaded {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* 🔄 Loading state for images */
+        .photo-item.loading::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                transparent 25%, 
+                rgba(255,255,255,0.1) 50%, 
+                transparent 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        /* 🚫 Error state for failed images */
+        .photo-item.error {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: var(--font-size-sm);
+        }
+
+        .photo-item.error::after {
+            content: '📷';
+            font-size: 2rem;
+            opacity: 0.3;
         }
 
         /* 🔄 LOADING & ERROR STATES */
@@ -176,17 +517,32 @@
             color: #ff4444;         /* 🎨 Error color - red */
         }
 
-        /* 🖼️ LIGHTBOX WITH MODERN ANIMATIONS */
+        /* 🖼️ ENHANCED LIGHTBOX WITH DARK MODE */
         .lightbox {
             display: none;
             position: fixed;
-            z-index: 9999;          /* 📏 High z-index to appear above Framer content */
+            z-index: var(--z-modal); /* 📏 Use CSS custom property */
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
             background-color: rgba(0,0,0,0);  /* Start transparent */
-            transition: background-color 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: background-color var(--transition-slow);
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
+        }
+
+        .lightbox.active {
+            background-color: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        /* 🌙 Dark mode lightbox */
+        @media (prefers-color-scheme: dark) {
+            .lightbox.active {
+                background-color: rgba(0,0,0,0.95);
+            }
         }
 
         .lightbox.show {
@@ -587,6 +943,13 @@
 <body>
     <div class="gallery-container">
         <div class="filter-container">
+            <!-- 🔍 Search functionality -->
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" id="searchInput" placeholder="Search photos by title, tags, or description..." aria-label="Search photos">
+                <button class="clear-search" id="clearSearch" aria-label="Clear search">✖</button>
+            </div>
+            
             <div class="filter-tags" id="filterTags">
                 <!-- Filter tags will be populated here -->
             </div>
@@ -601,6 +964,9 @@
             <!-- Photos will be populated here -->
         </div>
     </div>
+
+    <!-- ⬆️ Back to top button -->
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
 
     <!-- Lightbox -->
     <div id="lightbox" class="lightbox">
@@ -622,19 +988,284 @@
                 this.allTags = new Set();
                 this.activeTags = new Set();
                 
+                // 🔍 Search and interaction tracking
+                this.searchTerm = '';
+                this.viewedPhotos = new Set();
+                this.filterUsage = new Map();
+                this.currentLightboxIndex = -1;
+                
+                // 🎨 Theme and device detection
+                this.prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                this.prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                this.supportsWebP = this.checkWebPSupport();
+                
                 this.init();
+            }
+
+            // 🔧 UTILITY METHODS FOR NEW FEATURES
+            
+            checkWebPSupport() {
+                // Create a tiny WebP image to test support
+                const webP = 'data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAACyAgCdASoCAAIALmk0mk0iIiIiIgBoSygABc6WWgAA/veff/0PP8bA//LwYAAA';
+                const img = new Image();
+                return new Promise(resolve => {
+                    img.onload = img.onerror = () => resolve(img.height === 2);
+                    img.src = webP;
+                });
+            }
+
+            // 🎯 Track user interactions for analytics
+            trackInteraction(type, data) {
+                try {
+                    const interaction = {
+                        type,
+                        data,
+                        timestamp: new Date().toISOString(),
+                        userAgent: navigator.userAgent,
+                        viewportSize: `${window.innerWidth}x${window.innerHeight}`
+                    };
+                    
+                    // Store in localStorage for persistence
+                    const interactions = JSON.parse(localStorage.getItem('flickr-gallery-interactions') || '[]');
+                    interactions.push(interaction);
+                    
+                    // Keep only last 100 interactions to prevent storage bloat
+                    if (interactions.length > 100) {
+                        interactions.splice(0, interactions.length - 100);
+                    }
+                    
+                    localStorage.setItem('flickr-gallery-interactions', JSON.stringify(interactions));
+                } catch (e) {
+                    console.warn('Could not track interaction:', e);
+                }
+            }
+
+            // 🔍 Enhanced search functionality
+            performSearch(term) {
+                this.searchTerm = term.toLowerCase().trim();
+                this.trackInteraction('search', { term: this.searchTerm });
+                
+                if (!this.searchTerm) {
+                    this.filteredPhotos = this.photos;
+                } else {
+                    this.filteredPhotos = this.photos.filter(photo => {
+                        const title = (photo.title || '').toLowerCase();
+                        const tags = (photo.tags || '').toLowerCase();
+                        const description = (photo.description || '').toLowerCase();
+                        
+                        return title.includes(this.searchTerm) || 
+                               tags.includes(this.searchTerm) || 
+                               description.includes(this.searchTerm);
+                    });
+                }
+                
+                // Apply tag filters if any are active
+                if (this.activeTags.size > 0) {
+                    this.filteredPhotos = this.filteredPhotos.filter(photo => {
+                        const photoTags = new Set((photo.tags || '').split(' ').map(tag => tag.trim().toLowerCase()));
+                        return Array.from(this.activeTags).every(tag => photoTags.has(tag.toLowerCase()));
+                    });
+                }
+                
+                this.renderPhotos();
+                this.updateResultsCount();
+            }
+
+            // 📊 Update search results count
+            updateResultsCount() {
+                const existingCount = document.querySelector('.results-count');
+                if (existingCount) existingCount.remove();
+                
+                if (this.searchTerm || this.activeTags.size > 0) {
+                    const count = document.createElement('div');
+                    count.className = 'results-count';
+                    count.style.cssText = `
+                        text-align: center;
+                        margin: 10px 0;
+                        color: var(--text-muted);
+                        font-size: var(--font-size-sm);
+                    `;
+                    count.textContent = `${this.filteredPhotos.length} photo${this.filteredPhotos.length !== 1 ? 's' : ''} found`;
+                    
+                    const filterContainer = document.querySelector('.filter-container');
+                    filterContainer.appendChild(count);
+                }
             }
 
             init() {
                 this.isMobile = window.innerWidth <= 480;
                 this.setupEventListeners();
+                this.setupSearchFunctionality();
+                this.setupBackToTopButton();
+                this.setupKeyboardNavigation();
                 this.setupStickyFilters();
+                this.setupThemeDetection();
                 this.loadPhotos();
                 
-                // Listen for orientation changes
+                // Listen for orientation changes and theme changes
                 window.addEventListener('resize', () => {
                     this.isMobile = window.innerWidth <= 480;
                 });
+                
+                // Listen for theme changes
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                    this.prefersDarkMode = e.matches;
+                    this.updateTheme();
+                });
+            }
+
+            // 🔍 SEARCH FUNCTIONALITY SETUP
+            setupSearchFunctionality() {
+                const searchInput = document.getElementById('searchInput');
+                const clearButton = document.getElementById('clearSearch');
+                
+                if (searchInput) {
+                    // Real-time search with debouncing
+                    let searchTimeout;
+                    searchInput.addEventListener('input', (e) => {
+                        clearTimeout(searchTimeout);
+                        searchTimeout = setTimeout(() => {
+                            this.performSearch(e.target.value);
+                        }, 300); // 300ms debounce
+                    });
+                    
+                    // Clear search functionality
+                    clearButton.addEventListener('click', () => {
+                        searchInput.value = '';
+                        this.performSearch('');
+                        searchInput.focus();
+                    });
+                    
+                    // Search on Enter key
+                    searchInput.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            clearTimeout(searchTimeout);
+                            this.performSearch(e.target.value);
+                        }
+                    });
+                }
+            }
+
+            // ⬆️ BACK TO TOP BUTTON SETUP
+            setupBackToTopButton() {
+                const backToTopButton = document.getElementById('backToTop');
+                
+                if (backToTopButton) {
+                    // Show/hide based on scroll position
+                    window.addEventListener('scroll', () => {
+                        if (window.pageYOffset > 300) {
+                            backToTopButton.classList.add('visible');
+                        } else {
+                            backToTopButton.classList.remove('visible');
+                        }
+                    });
+                    
+                    // Smooth scroll to top
+                    backToTopButton.addEventListener('click', () => {
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        });
+                        this.trackInteraction('back_to_top', {});
+                        
+                        // Add haptic feedback if supported
+                        if (navigator.vibrate) {
+                            navigator.vibrate(50);
+                        }
+                    });
+                }
+            }
+
+            // ⌨️ KEYBOARD NAVIGATION SETUP
+            setupKeyboardNavigation() {
+                document.addEventListener('keydown', (e) => {
+                    // ESC to close lightbox
+                    if (e.key === 'Escape') {
+                        this.closeLightbox();
+                    }
+                    
+                    // Arrow keys for lightbox navigation
+                    if (this.currentLightboxIndex >= 0) {
+                        if (e.key === 'ArrowLeft') {
+                            e.preventDefault();
+                            this.navigateLightbox(-1);
+                        } else if (e.key === 'ArrowRight') {
+                            e.preventDefault();
+                            this.navigateLightbox(1);
+                        }
+                    }
+                    
+                    // F for fullscreen toggle
+                    if (e.key === 'f' || e.key === 'F') {
+                        if (this.currentLightboxIndex >= 0) {
+                            e.preventDefault();
+                            this.toggleFullscreen();
+                        }
+                    }
+                    
+                    // Focus search with Ctrl/Cmd + K
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                        e.preventDefault();
+                        const searchInput = document.getElementById('searchInput');
+                        if (searchInput) {
+                            searchInput.focus();
+                            searchInput.select();
+                        }
+                    }
+                });
+            }
+
+            // 🎨 THEME DETECTION SETUP
+            setupThemeDetection() {
+                this.updateTheme();
+                
+                // Watch for system theme changes
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                    this.prefersDarkMode = e.matches;
+                    this.updateTheme();
+                });
+            }
+
+            // 🎨 UPDATE THEME
+            updateTheme() {
+                const root = document.documentElement;
+                if (this.prefersDarkMode) {
+                    root.setAttribute('data-theme', 'dark');
+                } else {
+                    root.setAttribute('data-theme', 'light');
+                }
+            }
+
+            // 🖼️ LIGHTBOX NAVIGATION
+            navigateLightbox(direction) {
+                const newIndex = this.currentLightboxIndex + direction;
+                if (newIndex >= 0 && newIndex < this.filteredPhotos.length) {
+                    this.currentLightboxIndex = newIndex;
+                    const photo = this.filteredPhotos[newIndex];
+                    this.openLightbox(photo.url, photo.title, newIndex);
+                }
+            }
+
+            // 🖥️ FULLSCREEN TOGGLE
+            toggleFullscreen() {
+                if (!document.fullscreenElement) {
+                    const lightbox = document.getElementById('lightbox');
+                    if (lightbox.requestFullscreen) {
+                        lightbox.requestFullscreen();
+                    } else if (lightbox.webkitRequestFullscreen) {
+                        lightbox.webkitRequestFullscreen();
+                    } else if (lightbox.msRequestFullscreen) {
+                        lightbox.msRequestFullscreen();
+                    }
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    } else if (document.msExitFullscreen) {
+                        document.msExitFullscreen();
+                    }
+                }
             }
 
             setupStickyFilters() {
@@ -939,87 +1570,215 @@
                 console.log('Rendering gallery with', this.filteredPhotos.length, 'photos');
                 const gallery = document.getElementById('gallery');
                 
-                // Modern exit animation - staggered fade out
+                // 🎭 Enhanced exit animations with accessibility considerations
                 const currentPhotos = gallery.querySelectorAll('.photo-item');
-                currentPhotos.forEach((photo, index) => {
-                    setTimeout(() => {
-                        photo.classList.add('fade-out');
-                    }, index * 50); // Stagger the exit animations
-                });
+                if (!this.prefersReducedMotion) {
+                    currentPhotos.forEach((photo, index) => {
+                        setTimeout(() => {
+                            photo.classList.add('fade-out');
+                        }, index * 50); // Stagger the exit animations
+                    });
+                }
                 
                 // Wait for exit animations to complete
+                const animationDelay = this.prefersReducedMotion ? 0 : 400;
                 setTimeout(() => {
                     gallery.innerHTML = '';
                     
-                    // Modern entrance animations - variety of effects
+                    // 🔄 Show loading skeletons while images load
+                    this.showLoadingSkeletons(gallery);
+                    
+                    // 🖼️ Enhanced image rendering with lazy loading and accessibility
                     this.filteredPhotos.forEach((photo, index) => {
-                        const photoElement = document.createElement('div');
-                        photoElement.className = 'photo-item';
-                        
-                        const img = document.createElement('img');
-                        img.src = photo.url_m;
-                        img.alt = photo.title;
-                        img.loading = 'lazy';
-                        
-                        photoElement.appendChild(img);
-                        photoElement.addEventListener('click', () => this.openLightbox(photo));
-                        
-                        gallery.appendChild(photoElement);
-                        
-                        // Staggered entrance with clean fade animation
-                        setTimeout(() => {
-                            photoElement.classList.add('fade-in');
-                            
-                            // Add interaction enhancements after animation completes
-                            setTimeout(() => {
-                                if (this.isMobile) {
-                                    // Mobile: Touch-based interactions with scroll protection
-                                    photoElement.style.transition = 'transform 0.2s ease';
-                                    
-                                    let touchStartTime = 0;
-                                    let touchStartY = 0;
-                                    let hasMoved = false;
-                                    
-                                    photoElement.addEventListener('touchstart', (e) => {
-                                        touchStartTime = Date.now();
-                                        touchStartY = e.touches[0].clientY;
-                                        hasMoved = false;
-                                        photoElement.style.transform = 'scale(0.95)';
-                                    });
-                                    
-                                    photoElement.addEventListener('touchmove', (e) => {
-                                        const touchY = e.touches[0].clientY;
-                                        const moveDistance = Math.abs(touchY - touchStartY);
-                                        if (moveDistance > 10) { // 10px threshold
-                                            hasMoved = true;
-                                            photoElement.style.transform = 'scale(1)'; // Reset scale if scrolling
-                                        }
-                                    });
-                                    
-                                    photoElement.addEventListener('touchend', (e) => {
-                                        const touchDuration = Date.now() - touchStartTime;
-                                        photoElement.style.transform = 'scale(1)';
-                                        
-                                        // Only open lightbox if it was a quick tap without movement
-                                        if (!hasMoved && touchDuration < 300) {
-                                            e.preventDefault(); // Prevent any other actions
-                                            setTimeout(() => this.openLightbox(photo), 50);
-                                        }
-                                    });
-                                } else {
-                                    // Desktop: Nordic precision hover
-                                    photoElement.style.transition = 'all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)';
-                                    // Hover effects are handled by CSS for consistency
-                                }
-                            }, this.isMobile ? 400 : 600);
-                        }, this.isMobile ? index * 20 : index * 30); // ❄️ Precise Nordic timing
+                        this.createPhotoElement(photo, index, gallery);
                     });
                     
                     console.log('Gallery rendered with', gallery.children.length, 'elements');
-                }, 400); // Wait for all exit animations
+                }, animationDelay);
             }
 
-            openLightbox(photo) {
+            // 🔄 SHOW LOADING SKELETONS
+            showLoadingSkeletons(gallery) {
+                // Create skeleton placeholders
+                const skeletonCount = Math.min(this.filteredPhotos.length, 12); // Max 12 skeletons
+                for (let i = 0; i < skeletonCount; i++) {
+                    const skeleton = document.createElement('div');
+                    skeleton.className = 'photo-item photo-skeleton skeleton';
+                    skeleton.setAttribute('aria-hidden', 'true');
+                    gallery.appendChild(skeleton);
+                }
+            }
+
+            // 🖼️ CREATE ENHANCED PHOTO ELEMENT
+            createPhotoElement(photo, index, gallery) {
+                const photoElement = document.createElement('div');
+                photoElement.className = 'photo-item loading';
+                photoElement.setAttribute('role', 'button');
+                photoElement.setAttribute('tabindex', '0');
+                photoElement.setAttribute('aria-label', `View photo: ${photo.title}`);
+                
+                // 🖼️ Enhanced image with lazy loading and error handling
+                const img = document.createElement('img');
+                
+                // Use responsive image sizes based on device
+                const imageUrl = this.getOptimalImageUrl(photo);
+                
+                img.src = imageUrl;
+                img.alt = photo.title || 'Photo from Flickr album';
+                img.loading = 'lazy';
+                img.decoding = 'async';
+                
+                // 🔄 Handle image loading states
+                img.addEventListener('load', () => {
+                    photoElement.classList.remove('loading');
+                    img.classList.add('loaded');
+                    
+                    // Remove skeleton placeholder
+                    const skeleton = gallery.querySelector('.photo-skeleton');
+                    if (skeleton) skeleton.remove();
+                    
+                    // Track successful image load
+                    this.trackInteraction('image_loaded', { 
+                        photo_id: photo.id, 
+                        photo_title: photo.title,
+                        load_time: performance.now() 
+                    });
+                });
+                
+                img.addEventListener('error', () => {
+                    console.warn('Failed to load image:', photo.title);
+                    photoElement.classList.remove('loading');
+                    photoElement.classList.add('error');
+                    photoElement.setAttribute('aria-label', `Failed to load photo: ${photo.title}`);
+                    
+                    // Track failed image load
+                    this.trackInteraction('image_error', { 
+                        photo_id: photo.id, 
+                        photo_title: photo.title 
+                    });
+                });
+                
+                photoElement.appendChild(img);
+                
+                // 🎯 Enhanced interaction handling
+                this.setupPhotoInteractions(photoElement, photo, index);
+                
+                gallery.appendChild(photoElement);
+                
+                // 🎭 Staggered entrance animations (accessibility-aware)
+                if (!this.prefersReducedMotion) {
+                    setTimeout(() => {
+                        photoElement.classList.add('fade-in');
+                    }, index * 30);
+                }
+            }
+
+            // 🖼️ GET OPTIMAL IMAGE URL
+            getOptimalImageUrl(photo) {
+                const devicePixelRatio = window.devicePixelRatio || 1;
+                const screenWidth = window.innerWidth;
+                
+                // Choose image size based on screen width and pixel density
+                if (screenWidth <= 480) {
+                    // Mobile: use small images
+                    return devicePixelRatio > 1 ? photo.url_m : photo.url_s;
+                } else if (screenWidth <= 768) {
+                    // Tablet: use medium images
+                    return devicePixelRatio > 1 ? photo.url_c : photo.url_m;
+                } else {
+                    // Desktop: use larger images
+                    return devicePixelRatio > 1 ? photo.url_h : photo.url_c;
+                }
+            }
+
+            // 🎯 SETUP PHOTO INTERACTIONS
+            setupPhotoInteractions(photoElement, photo, index) {
+                // Click handler
+                const openPhoto = () => {
+                    this.openLightbox(photo, index);
+                    this.viewedPhotos.add(photo.id);
+                    this.trackInteraction('photo_viewed', { 
+                        photo_id: photo.id, 
+                        photo_title: photo.title,
+                        view_method: 'click'
+                    });
+                };
+                
+                photoElement.addEventListener('click', openPhoto);
+                
+                // Keyboard accessibility
+                photoElement.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openPhoto();
+                        this.trackInteraction('photo_viewed', { 
+                            photo_id: photo.id, 
+                            photo_title: photo.title,
+                            view_method: 'keyboard'
+                        });
+                    }
+                });
+                
+                // Enhanced mobile touch interactions
+                if (this.isMobile) {
+                    this.setupMobileTouchInteractions(photoElement, openPhoto);
+                }
+            }
+
+            // 📱 MOBILE TOUCH INTERACTIONS
+            setupMobileTouchInteractions(photoElement, openPhoto) {
+                let touchStartTime = 0;
+                let touchStartY = 0;
+                let touchStartX = 0;
+                let hasMoved = false;
+                
+                photoElement.addEventListener('touchstart', (e) => {
+                    touchStartTime = Date.now();
+                    touchStartY = e.touches[0].clientY;
+                    touchStartX = e.touches[0].clientX;
+                    hasMoved = false;
+                    
+                    if (!this.prefersReducedMotion) {
+                        photoElement.style.transform = 'scale(0.95)';
+                    }
+                }, { passive: true });
+                
+                photoElement.addEventListener('touchmove', (e) => {
+                    const touchY = e.touches[0].clientY;
+                    const touchX = e.touches[0].clientX;
+                    const moveDistanceY = Math.abs(touchY - touchStartY);
+                    const moveDistanceX = Math.abs(touchX - touchStartX);
+                    
+                    if (moveDistanceY > 10 || moveDistanceX > 10) {
+                        hasMoved = true;
+                        if (!this.prefersReducedMotion) {
+                            photoElement.style.transform = 'scale(1)';
+                        }
+                    }
+                }, { passive: true });
+                
+                photoElement.addEventListener('touchend', (e) => {
+                    const touchDuration = Date.now() - touchStartTime;
+                    
+                    if (!this.prefersReducedMotion) {
+                        photoElement.style.transform = 'scale(1)';
+                    }
+                    
+                    // Only open lightbox if it was a quick tap without movement
+                    if (!hasMoved && touchDuration < 300) {
+                        e.preventDefault();
+                        
+                        // Add haptic feedback if supported
+                        if (navigator.vibrate) {
+                            navigator.vibrate(50);
+                        }
+                        
+                        setTimeout(openPhoto, 50);
+                    }
+                }, { passive: false });
+            }
+
+            openLightbox(photo, index = -1) {
                 const lightbox = document.getElementById('lightbox');
                 const lightboxContent = lightbox.querySelector('.lightbox-content');
                 const lightboxImg = document.getElementById('lightboxImg');
