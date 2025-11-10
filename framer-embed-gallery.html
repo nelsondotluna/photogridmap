@@ -1672,6 +1672,12 @@
             }
 
             filterByTag(tag) {
+                // Scroll to top when changing categories
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+                
                 console.log('Filtering by tag:', tag);
                 console.log('Available photos:', this.photos.length);
                 
