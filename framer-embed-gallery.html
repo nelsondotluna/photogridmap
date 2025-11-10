@@ -52,12 +52,12 @@
 
         /* 📋 FILTER SECTION - ROBUST STICKY */
         .filter-container {
-            position: sticky;        /* 📌 Stick to top when scrolling */
+            position: fixed;         /* 📌 Fixed to top for reliable sticking */
             position: -webkit-sticky; /* 🍎 Safari fallback */
             top: 0;                  /* 📏 Stick to very top */
             left: 0;                 /* 📏 Ensure proper positioning */
             right: 0;                /* 📏 Full width */
-            z-index: 100;            /* 📏 Above photos but below lightbox */
+            z-index: 1000;           /* 📏 Above photos but below lightbox */
             background: linear-gradient(180deg, 
                         rgba(255,255,255,0.95) 0%, 
                         rgba(255,255,255,0.9) 80%, 
@@ -77,16 +77,26 @@
         /* 📱 FORCE MOBILE STICKY BEHAVIOR */
         @media screen and (max-width: 768px) {
             .filter-container {
-                position: -webkit-sticky !important;
-                position: sticky !important;
+                position: fixed !important;
                 top: 0 !important;
                 left: 0 !important;
                 right: 0 !important;
                 z-index: 1000 !important;
                 width: 100% !important;
+                padding: 8px 0 !important; /* Reduced padding for mobile */
+                margin-bottom: 10px !important; /* Reduced margin */
                 /* Additional mobile-specific fixes */
                 transform: translateZ(0); /* Force hardware acceleration */
                 will-change: transform;   /* Optimize for position changes */
+            }
+            
+            .filter-tags {
+                gap: 5px !important; /* Reduced spacing for mobile */
+            }
+            
+            .filter-tag {
+                padding: 4px 8px !important; /* Smaller padding on mobile */
+                font-size: 14px !important; /* Smaller font size */
             }
         }
 
@@ -121,7 +131,7 @@
         }
 
         .filter-tag.active {
-            color: #007AFF;         /* 🎨 Active filter color - change to match your brand */
+            color: #DFFF00;         /* 🎨 Active filter color - chartreuse */
             font-weight: bold;      /* Make active filters bold */
         }
 
@@ -139,6 +149,7 @@
             grid-template-columns: repeat(4, 1fr);  /* 📐 4 columns desktop - change number for different layout */
             gap: 4px;                               /* 📏 Gap between photos - adjust spacing */
             width: 100%;
+            margin-top: 80px; /* Add top margin to account for fixed navigation */
         }
 
         .photo-item {
@@ -232,7 +243,7 @@
 
         .loading-progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, #007acc, #00a8ff);
+            background: linear-gradient(90deg, #DFFF00, #DFFF00);
             width: 0%;
             transition: width 0.3s ease;
             position: relative;
@@ -729,9 +740,9 @@
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(0,122,255,0.3);
+            border: 3px solid rgba(223,255,0,0.3);
             border-radius: 50%;
-            border-top-color: #007AFF;
+            border-top-color: #DFFF00;
             animation: modernSpin 1s ease-in-out infinite;
             margin-left: 10px;
         }
@@ -806,7 +817,7 @@
             
             .filter-tag:active {
                 transform: scale(0.95);
-                background-color: rgba(0,122,255,0.1);
+                background-color: rgba(223,255,0,0.1);
             }
 
             /* 📱 Prevent accidental taps during scrolling */
@@ -1154,7 +1165,7 @@
         }
 
         .dark-mode .filter-tag.active {
-            color: #4A90E2 !important;
+            color: #DFFF00 !important;
         }
 
         .dark-mode .filter-separator {
@@ -1189,12 +1200,12 @@
 
         /* 🔍 SIMPLIFIED FOCUS STYLES */
         .filter-tag:focus {
-            outline: 2px solid #4A90E2;
+            outline: 2px solid #DFFF00;
             outline-offset: 2px;
         }
 
         .photo-item:focus {
-            outline: 2px solid #4A90E2;
+            outline: 2px solid #DFFF00;
             outline-offset: 2px;
         }
 
@@ -1243,12 +1254,12 @@
 
         /* 🎯 FOCUS WITHIN FOR IMPROVED KEYBOARD NAV */
         .filter-container:focus-within {
-            outline: 2px solid #4A90E2;
+            outline: 2px solid #DFFF00;
             outline-offset: 2px;
         }
 
         .gallery-grid:focus-within {
-            outline: 2px solid #4A90E2;
+            outline: 2px solid #DFFF00;
             outline-offset: 2px;
         }
 
