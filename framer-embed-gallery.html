@@ -2400,6 +2400,16 @@
             document.body.classList.add('dark-mode');
             
             new FlickrGallery();
+                // Dynamically set gallery top margin based on nav height
+                function setGalleryTopMargin() {
+                    var nav = document.querySelector('.filter-container');
+                    var gallery = document.querySelector('.gallery-grid');
+                    if (nav && gallery) {
+                        gallery.style.marginTop = nav.offsetHeight + 'px';
+                    }
+                }
+                setGalleryTopMargin();
+                window.addEventListener('resize', setGalleryTopMargin);
         });
     </script>
 </body>
