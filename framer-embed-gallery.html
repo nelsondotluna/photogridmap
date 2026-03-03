@@ -350,12 +350,12 @@
         .lightbox-content img {
             display: block;         /* Remove any inline spacing */
             max-width: 85vw;        /* More conservative for smaller screens */
-            max-height: 70vh;       /* More conservative to prevent cropping */
+            max-height: 90vh;       /* Set maximum height to 90% of the viewport */
             width: auto;
             height: auto;
             object-fit: contain;    /* Ensures entire image is visible without cropping */
-            border-radius: 12px;    /* 🎨 More rounded corners */
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            border-radius: 8px;    /* 🎨 More rounded corners */
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); /* Optional: Add shadow for better focus */
             transition: transform 0.3s ease, opacity 0.3s ease;
         }
 
